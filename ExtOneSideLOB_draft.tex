@@ -1,0 +1,74 @@
+\documentclass[openany,oneside]{article}
+\usepackage{fullpage}
+\usepackage{amsmath,amsthm,amssymb,mathtools,tikz,epsfig,enumerate}
+\usepackage{hyperref,titling,titlesec,pdfpages,setspace,fancyhdr,multicol}
+
+% formatting
+\setlength{\parskip}{2ex}
+\setlength{\parindent}{0pt}
+
+% statement environment
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+ 
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{prob}[thm]{Problem}
+\newtheorem{eg}[thm]{Example}
+ 
+\theoremstyle{remark}
+\newtheorem{rem}[thm]{Remark}
+
+% shorthand notations
+\newcommand{\E}{\mathbb{E}} % expectation
+\renewcommand{\P}{\mathbb{P}} % probability
+\newcommand{\I}{\mathbb{I}} % indicator
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert} % absolute value, or cardinality
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert} % norm
+
+
+% info
+\title{ExtOneSideLOB}
+\author{Yangxi Ou \\* Department of Mathematical Sciences \\* Carnegie Mellon University}
+\date{Summer 2017}
+\hypersetup{bookmarksnumbered=true, 
+			bookmarksopen=true,
+            unicode=true,
+            pdftitle=\thetitle,
+            pdfauthor=Yangxi Ou,
+            pdfstartview=FitH,
+            pdfpagemode=UseOutlines}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{document}
+
+% title and table of contents
+\begin{center}	
+	\textbf{\Large Generalizations of OPTIMAL EXECUTION IN A GENERAL ONE-SIDED LIMIT-ORDER BOOK by Predoiu, Shaikhet, and Shreve, 2011} \\*[5ex]
+	\theauthor \\*[5ex]
+    Comments and research ideas \thedate \\*[5ex]
+	\tableofcontents
+\end{center}
+
+
+% Summary of original and directions of generalizations
+\section*{Summary of the original paper, and directions of generalizations}
+
+
+% jumps
+\section{Introducing jumps into the best ask price $A$}
+
+
+% time-dependent resiliency
+\section{Time-dependent resiliency function $h$}
+
+
+\section{}
+
+
+
+\end{document}
