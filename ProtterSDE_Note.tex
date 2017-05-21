@@ -1,0 +1,163 @@
+\documentclass[openany,oneside]{article}
+\usepackage{fullpage}
+\usepackage{amsmath,amsthm,amssymb,mathtools,tikz,epsfig,enumerate}
+\usepackage{hyperref,titling,titlesec,pdfpages,setspace,fancyhdr,multicol}
+
+% formatting
+\setlength{\parskip}{2ex}
+\setlength{\parindent}{0pt}
+
+% statement environment
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+ 
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{prob}[thm]{Problem}
+\newtheorem{eg}[thm]{Example}
+ 
+\theoremstyle{remark}
+\newtheorem{rem}[thm]{Remark}
+
+% shorthand notations
+\newcommand{\E}{\mathbb{E}} % expectation
+\renewcommand{\P}{\mathbb{P}} % probability
+\newcommand{\I}{\mathbb{I}} % indicator
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert} % absolute value, or cardinality
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert} % norm
+
+\renewcommand{\d}{\mathrm{d}} % differential
+\newcommand{\sH}[1][2]{\mathcal{H}^{#1}} % H-space for integrators
+\newcommand{\pred}{\mathcal{P}} % predictable sigma-algebra
+\newcommand{\bP}{\mathrm{b}\pred} % bounded predictable sigma-algebra
+\renewcommand{\L}{\mathbb{L}} % left continuous process
+\newcommand{\bL}{\mathrm{b}\L} % bounded left continuous process
+
+% info
+\title{Varadhan_LDA}
+\author{Yangxi Ou \\* Department of Mathematical Sciences \\* Carnegie Mellon University}
+\date{Spring 2017}
+\hypersetup{bookmarksnumbered=true, 
+			bookmarksopen=true,
+            unicode=true,
+            pdftitle=\thetitle,
+            pdfauthor=Yangxi Ou,
+            pdfstartview=FitH,
+            pdfpagemode=UseOutlines}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{document}
+
+% title and table of contents
+\begin{center}	
+	\textbf{\Large Notes on Varadhan's \\ Large Deviations and Applications} \\*[5ex]
+	\theauthor \\*[5ex]
+	Reading course with Professor Shreve, \thedate \\*[5ex]
+	\tableofcontents
+\end{center}
+
+
+%% April 4th, 2017, Tuesday
+\setcounter{section}{1}
+
+\section{Large Deviation Principles}
+We will formulate an abstract framework for large deviations. It is usually assumed that the state space $X$ is a Polish space, or more generally a metric space. Here in this section, we don't need such a strong assumption rather than $X$ being a first countable Hausdorff topological space.
+
+\begin{defn}[Large deviation principles]
+Let $X$ be a topological space, $\{\P_\epsilon : \epsilon >0\}$ be a family of Borel probability measures on $X$, $I:X\to [0,\infty]$. Then $\{\P_\epsilon : \epsilon >0\}$ obeys a large deviation principle (LDP) with rate function $I$ if
+\begin{enumerate}
+\item (lsc): $I$ is lower semicontinuous (lsc)
+\item (upper bound): $\forall C\subseteq X$ closed, $\limsup_{\epsilon\to 0} \epsilon \log \P_\epsilon(C) \le -\inf_{x\in C}I(x) $
+\item (lower bound): $\forall U\subseteq X$ open, $\liminf_{\epsilon\to 0} \epsilon \log \P_\epsilon(U) \ge -\inf_{x\in U}I(x) $
+\end{enumerate}
+We write LDP$(\P_{\epsilon}, I)$ (holds).
+\end{defn}
+\begin{rem}
+$I$ is good (tight) if $\{I \le a\}$ is compact for $a\in \mathbb{R}$.
+\begin{itemize}
+\item Note that $\liminf_{\epsilon\to 0} \epsilon \log \P_\epsilon(U) \ge -\inf_{x\in U}I(x) \ge -I(x), \forall x\in U$.
+\item Let $A \subseteq X$ be Borel, then $-\inf_{x\in A^\circ} I(x) \le \liminf_{\epsilon\to 0} \epsilon \log\P_\epsilon(A^\circ) \le \limsup \epsilon \log\P_\epsilon(\bar{A}) \le -\inf_{x\in\bar{A}} I(x)$. In particular, if $\partial A =\emptyset$, then we have equality.
+\item In first countable Hausdorff topological space, we have that $f$ is lsc iff $f(x) \le \liminf_{n\to \infty}f(x_n)$ for any sequence $x_n \to x$.
+\item The condition that $I$ being lsc can be dropped. Suppose that $I$ is not lsc, then one can replace $I$ by its lower semicontinuous regularization $I_{lsc}(x) := \sup_{x\in V \in \tau} \inf_{y\in V} I(y)$, if both the lower bound and the upper bound conditions hold. Note that $I_{lsc}$ is the largest lower semicontinuous functions below $I$.
+\end{itemize}
+\end{rem}
+
+
+\begin{thm}[Varadhan's lemma]
+Assume LDP$(\P_\epsilon, I)$ holds, $F:X\to \mathbb{R}$ is bounded and continuous. Then $\lim_{\epsilon\to 0} \epsilon \log \int_X \exp[\frac{1}{\epsilon}F(x)] \P_\epsilon (d x) = \sup_{x\in X}[F(x) - I(x)]$
+\end{thm}
+\begin{proof}
+Consider the upper bound first. We have $C>0$ such that $F(X) \subseteq [-C,C]$. Take $N\in \mathbb{N}$, introduce a discretization $y_{N,j} := -C + \frac{2C}{N} j, \forall 0\le j \le N$. Let $X_{N,j} := F^{-1}([y_{N,j}, y_{N,j+1}]), \forall 0\le j< N$. Then $X_{N,j}$ is closed as $F$ is continuous.
+\par
+Then
+\begin{align*}
+& \int_X \exp[\frac{1}{\epsilon} F(x)] \P_\epsilon(d x) \le \sum_{j=0}^{N-1} \int_{X_{N,j}} \exp[\frac{1}{\epsilon} F(x)] \P_\epsilon (d x) \le \sum_{j=0}^{N-1} \exp[\frac{1}{\epsilon} y_{N,j+1}] \P_\epsilon(X_{N,j}) \\
+\Rightarrow & \epsilon \log \int_X \exp[\frac{1}{\epsilon}F(x)] \P_\epsilon(d x) \le \epsilon \log\left(N \max_{0\le j< N}\{e^{y_{N,j+1}/\epsilon} \P_\epsilon(X_{N,j}) \} \right) \le \epsilon \log N + \max_{0\le j<N}\{y_{N,j+1} + \epsilon \log \P_\epsilon(X_{N,j}) \} \\
+\le & \epsilon \log N + \delta + \max_{0\le j< N}\{y_{N,j+1} - \inf_{x\in X_{N,j}} I(x) \} \le \epsilon \log N + \delta + \max_{0\le j<N} \{F(x) + \frac{2C}{N} - \inf_{x\in X_{N,j}} I(x) \} \\
+\le & \epsilon \log N + \delta + \frac{2C}{N} + \max_{0\le j< N} \sup_{x\in X_{N,j}} \{F(x) - I(x)\} = \epsilon \log N + \delta + \frac{2C}{N} + \sup_{x\in X} \{F(x) - I(x)\}
+\end{align*}
+Send $\epsilon \downarrow 0$, then $\delta \downarrow 0$, then let $N\to \infty$, we have that $\limsup_{\epsilon\to 0} \epsilon \log \int_X \exp[\frac{1}{\epsilon} F(x)] \P_\epsilon (d x) \le \sup_{x\in X} \{F(x) - I(x)\}$.
+\par
+Consider the lower bound then. Fix $x\in X$, Since $F$ is continuous, given $\delta >0$, we have an open neighborhood $U_{x,\delta}$ such that $F(y) \ge F(x) - \delta, \forall y\in U_{x,\delta}$. Then
+\begin{align*}
+& \liminf_{\epsilon \to 0} \epsilon \log \int_X \exp[\frac{1}{\epsilon} F(y)] \P_\epsilon (d y) \ge \liminf_{\epsilon \to 0} \epsilon \log \int_{U_{x,\delta}} \exp[\frac{1}{\epsilon} (F(x) - \delta)] \P_\epsilon (d y) = \liminf_{\epsilon\to 0} \left[(F(x) - \delta) + \epsilon \log \P_\epsilon(U_{x,\delta}) \right] \\
+\ge & F(x) - I(x) -\delta
+\end{align*}
+Let $\delta \downarrow 0$, then take supremum over $x\in X$.
+\end{proof}
+\begin{rem}
+Varadhan's lemma can be considered as the functional version of the definition of the definition of LDP. It takes the place of the weak-star formulation in terms of bounded continuous functions in the theory of weak convergence of measures. 
+\end{rem}
+
+
+\begin{thm}
+Assume LDP$(\P_\epsilon, I)$ holds and that $I$ is a good rate function, $F_\epsilon \ge 0$ be Borel functions, $F\ge 0$ be lsc. Assume that $\liminf_{\epsilon \downarrow 0, y\to x} F_{\epsilon}(y) \ge F(x), \forall x\in X$. Then $\limsup_{\epsilon \to 0} \epsilon \log \int_X \exp[-\frac{1}{\epsilon} F_\epsilon(x)] \P_\epsilon(d x) \le -\inf_{x\in X}[F(x) + I(x)]$.
+\end{thm}
+\begin{proof}
+For each $x\in X$ and $\delta >0$, we can find an open neighborhood $U_{x,\delta}$ of $x$ and $\epsilon_{0,x,\delta} >0$ such that $F_{\epsilon}(y) \ge F(x) - \delta$ for $\epsilon < \epsilon_0$ and $y\in U_{x,\delta}$. Since $I$ is lsc, by shrinking $U_{x,\delta}$ if necessary, we can assume that $\inf_{x\in \bar{U}_{x,\delta}}(y) \ge I(x) - \delta$. Let $K \subseteq X$ be compact, we can find a finite $S \subseteq K$ such that $K \subseteq \cup_{x\in S} U_{x,\delta} =: V_{K,\delta} =: V$.
+\par
+We shall do separate analysis on $K$ and $K^c$.
+\par
+\begin{align*}
+& \int_{V} \exp[-\frac{1}{\epsilon} F_\epsilon (y)] \P_\epsilon(d y) \le \sum_{x\in S} \int_{U_{x,\delta}} \exp[-\frac{1}{\epsilon} F_{\epsilon}(y)] \P_\epsilon(d y) \\
+\le & \sum_{x\in S} \exp[-\frac{1}{\epsilon}(F(x)-\delta)] \P_\epsilon(\bar{U}_{x,\delta}) \le \sum_{x\in S} \exp(-\frac{1}{\epsilon}(F(x)-\delta)) \exp\left(-\frac{1}{\epsilon} \inf_{y\in \bar{U}_{x,\delta}}(I(y)-\delta) \right) \\
+\le & \sum_{x\in S} \exp\left(-\frac{1}{\epsilon}(F(x) + I(x) - 3\delta)\right)
+\end{align*}
+
+\begin{align*}
+& \int_{V^c} \exp[-\frac{1}{\epsilon} F_{\epsilon}(y)] \P_\epsilon(d y) \le \P_\epsilon(V^c) \le \exp\left(-\frac{1}{\epsilon} \right)
+\end{align*}
+
+
+\end{proof}
+
+Next, we prove the contraction principle, which allows one to pushforward LDP with good rate function from one space to another immediately. More specifically, if we have LDP$(\P_\epsilon, I)$ on $X$, and a continuous function $\pi:X\to Y$, then we also have LDP$(\mathbb{Q}_\epsilon, J)$, where $\mathbb{Q}_\epsilon = \P_\epsilon \circ \pi^{-1}$ and $J(y) = \inf_{x\in \pi^{-1}(y)} I(x) \in [0,\infty]$ are the corresponding pushforwards. If $I$ is tight, then $J$ is tight as well.
+
+\begin{thm}[Contraction principle]
+Suppose that LDP$(\P_\epsilon,I)$ holds with $I$ tight. Let $F_\epsilon: X\to Y$ be continuous and $F_\epsilon \to F$ uniformly on compacta, where $X$ and $Y$ are both metric spaces. Let $\mathbb{Q}_\epsilon := \P_\epsilon \circ F_\epsilon^{-1}$. Then LDP$(\mathbb{Q}_\epsilon, J)$ holds with $J(y) = \inf_{x\in F^{-1}(y)} I(x)$.
+\end{thm}
+\begin{proof}
+Consider upper bound first. Let $A\subseteq Y$ be closed. We want to show that $\limsup_{\epsilon \to 0} \epsilon \log \mathbb{Q}_{\epsilon}(A) \le -\inf_{y\in A} J(y)$. But the LHS involves $\epsilon \log \P_\epsilon(C_\epsilon)$, where $C_\epsilon := F^{-1}_\epsilon (A)$ is closed, while the RHS is $-\inf_{x\in C} I(x)$, where $C := F^{-1}(A)$ is closed as $F$ is continuous.
+\par
+Let $U \subseteq C$ be open and $K\subseteq X$ be compact, we claim that there is an open set $V \supseteq K$ such that $V\cap C_{\epsilon} \subseteq U, \forall \epsilon \le \epsilon_0$. Assuming the claim, we have $\P_\epsilon (C_\epsilon) \le \P_\epsilon (C_\epsilon \cap V) + \P_\epsilon (C_\epsilon \cap V^c) \le \P_\epsilon (\bar{U}) + \P_\epsilon (V^c)$. Therefore,
+\begin{align*}
+& \epsilon \log \P_\epsilon (C_\epsilon) \le \epsilon \log(\P_\epsilon (\bar{U}) + \P_\epsilon (V^c)) \le \epsilon \log 2 + \epsilon \max\{ \log \P_\epsilon(\bar{U}), \log \P_\epsilon(V^c) \} \le \epsilon \log 2 + \max\{ -\inf_{x\in\bar{U}} I(x), -\inf_{x\in V^c} I(x) \} + \delta
+\end{align*}
+Take $K=\{I\le l\}$, we have $\limsup_{\epsilon \to 0} \epsilon \log \P_\epsilon(C_\epsilon) \le \max\{ -\inf_{x\in\bar{U}} I(x), -\inf_{x\in K^c} I(x) \} \le \max\{-\inf_{x\in\bar{U}} I(x), -l \}$, and send $l\to\infty$, we have 
+\par
+We now prove the claim by contradiction. Suppose there is no such $V$, then for $V_n = K^{1/n}$, a $1/n$ open neighbourhood of $K$, then $V_n \cap C_{\epsilon_n} \not\subseteq U$ for some $\epsilon_n$. Pick $x_n \in V_n \cap C_{\epsilon_n} \cap U^c$. Let $L = K \cup \{x_n : n\in\mathbb{N} \}$, which is compact. Then $F_\epsilon \to F$ uniformly on $L$. Choose a subsequence up to reindexing that $x_n \to x \in L$. Then $F_{\epsilon_n}(x_n) \to F(x)$. Since $x_n\in C_{\epsilon_n}$, we have that $F_{\epsilon_n}(x_n) in A$. But $A$ is closed, so $F(x) \in A$ as a limit point. Then $x\in C \subseteq U$. It is a contradiction as $x_n \to x$ but $x_n \in U^c$.
+\par
+This finishes the proof of the claim.
+\par
+For the lower bound, consider $U\subseteq Y$ open. We want to show that $\liminf_{\epsilon\to 0} \epsilon \log \mathbb{Q}_{\epsilon}(U) \ge -\inf_{y\in U} J(y) = -\inf_{x\in V} I(x)$, where $V=F^{-1}(U)$. Put $V_\epsilon = F_\epsilon^{-1}(U)$. We can find an open neighbourhood of $x$, $W\subseteq X$, such that $F_\epsilon(W) \subseteq U$ for $\epsilon \le \epsilon_0$. Therefore, $\liminf_{\epsilon \to 0} \epsilon \log \P_\epsilon (V_\epsilon) \ge \liminf_{\epsilon \to 0} \epsilon \log \P_\epsilon (W) \ge -I(x)$, and this concludes the proof of lower bound.
+\end{proof}
+
+%% April 6th, 2017, Thursday
+\section{Cramer's Theorem}
+Consider a sequence of IID random variable $\{\xi_n\}_{n=1}^\infty$
+ 
+\end{document}
