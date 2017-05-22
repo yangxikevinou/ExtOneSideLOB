@@ -48,26 +48,114 @@
 
 % title and table of contents
 \begin{center}	
-	\textbf{\Large Generalizations of OPTIMAL EXECUTION IN A GENERAL ONE-SIDED LIMIT-ORDER BOOK by Predoiu, Shaikhet, and Shreve, 2011} \\*[5ex]
+	\textbf{\Large Generalizations of OPTIMAL EXECUTION IN A GENERAL ONE-SIDED LIMIT-ORDER BOOK by Predoiu, Shaikhet, and Shreve, 2011} \\*[5ex]    
+    Comments and research ideas \\*[5ex]
 	\theauthor \\*[5ex]
-    Comments and research ideas \thedate \\*[5ex]
+    \thedate \\*[5ex]
 	\tableofcontents
 \end{center}
 
 
 % Summary of original and directions of generalizations
 \section*{Summary of the original paper, and directions of generalizations}
+The following is a brief summary of the original paper OPTIMAL EXECUTION IN A GENERAL ONE-SIDED LIMIT-ORDER BOOK by Predoiu, Shaikhet, and Shreve, published on SIAM J. Finan. Math. in 2011.
+
+\begin{itemize}
+\item Setup
+
+A single large investor buying a specified security with only market buy orders against a centralized limit order book. His holding of the security is described by $X=\{X_t\}_{t\in[0,T]}$, an non-decreasing cadlag function adapted to a given filtered probability space satisfying the usual conditions $(\Omega, \mathcal{F}, \{\mathcal{F}_t\}_{t\in[0,T]}, \P)$.
+
+
+\item Input
+
+\begin{itemize}
+\item Target quantity to be purchased: $\bar{X} > 0$
+
+\item Time span of purchase: $[0,T]$
+
+\item Hypothetical (equilibrium) best ask price: $A=\{A_t\}_{t\in[0,T]}$, a continuous non-negative $\mathcal{H}^1$ martingale, i.e. $\E[A^\ast_T] < \infty$, where $A^\ast_t := \sup_{0\le s\le t} \abs{A_s}$. $A$ represents the hypothetical (equilibrium) best ask price as if there was zero trading activities from the beginning of the period. It is a quantitative description of the position of the ask side of the limit order book.
+
+\item Hypothetical (equilibrium) shape of limit order book: $F:\mathbb{R}_+ \to \mathbb{R}_+$, an non-decreasing caglad function specifying the cumulative quantity $F(x)$ of securities immediately available for purchase below the price level $x+A_t$ as if there was zero trading activity from the beginning of the period.
+
+\item Resiliency function: $h:\mathbb{R}_+ \to \mathbb{R}_+$, a strictly increasing locally Lipschitz function, vanishing at the origin ($h(0)=0$) with limit at infinity greater than $\bar{X}/T$ ($h(+\infty) > \bar{X}/T$), representing the rate of replenishment $h(x)$ of limit sell orders at the quantity level $x$. It specifies the response of the ask side of the limit order book to the aggregate market buy order flow: $E_t = X_t - \int_0^t h(E_s) ds, \forall t\in[0,T]$, where $X_t$ is the cumulative market buy orders up to time $t$, and $E_t$ is the actual or observed quantity level in the equilibrium limit order book.
+
+\item Cost functional of purchase: $C(X) := \int_0^T (A_t + D_t) d X^c_t + \sum_{0\le t\le T} [A_t \Delta X_t + \Phi(E_t) - \Phi(E_{t^-})]$, where $D_t$ is the extra marginal cost of continuous purchase at time $t$ (due to walking through the book) and $\Phi:\mathbb{R}_+ \to \mathbb{R}_+$ describes the total cost $\Phi(x)$ of purchasing $x$ amount of security immediately from the hypothetical best ask price in the equilibrium limit order book.
+\end{itemize}
+
+
+\item Output
+
+Optimal execution strategy and expected cost of purchase: $X^\ast:[0,T] \to \mathbb{R}_+$ that minimizes the expected cost $\E C(X)$ among all non-decreasing cadlag adapted process $X$ satisfying $X_T = \bar{X}$.
+
+
+\item Conclusion
+
+\begin{itemize}
+\item WLOG, one can consider deterministic strategies for optimal execution.
+
+\item Optimal execution can be achieved by Type B strategies: an initial lump sum purchase at time $0$, followed by continuous purchase exactly offsetting the resiliency so as to keep a constant level in the equilibrium book, then another lump sum purchase at an intermediate time, again followed by continuous purchase exactly offsetting the resiliency, and finally a terminal lump sum purchase at time $T$.
+
+\item Lump sum purchase could be zero. If the intermediate lump sum purchase is zero, it is called a Type A strategy, a special case of Type B strategy. A characterization regarding convexity is given for the optimality of Type A strategies, i.e. absence of intermediate lump sum in at least one optimal strategy. Uniqueness of optimal strategy is also discussed.
+\end{itemize}
+
+
+\item Methods/techniques
+\begin{itemize}
+\item Well-posedness (excluding continuity) of the imposed order book dynamics: The equation $E_t = X_t - \int_0^t h(E_s) ds, \forall t\in[0,T]$ has a unique solution $E$ for any admissible $X$. This is a standard ODE argument.
+
+\item Connections between price level, quantity level, are total cost in the equilibrium limit order book: $\psi:\mathbb{R}_+ \to \mathbb{R}_+$ gives the marginal price level $\psi(x)$ corresponding to the quantity level $x$, $\Phi:\mathbb{R}_+ \to \mathbb{R}_+$ gives the total cost $\Phi(x)$ of all securities up to the quantity level $x$ in the equilibrium book. This is mainly bookkeeping, introducing the correct definition/symbols and change of variables.
+
+\item Restatement of the problem: separate the random hypothetical best ask price $A$ (position of the limit order book) and the deterministic shape of the book $\Phi$ and dynamics of the book $h$. Rewrite the cost functional as a function of the \emph{state} $E$ instead of the \emph{control} $X$. The cost function is thus $C(X) = C(E) := \Phi(E_T) + \int_0^T \psi(E_s) h(E_s) ds$.
+
+\item Solving the restated problem using convex analysis: write the cost functional as the sum of a convex function of $E_T$ and a convex function of $h(E_s)$: $C(E) = \Phi(E_T) + \int_0^T g(h(E_s)) ds$, where $g(y) := y\psi(h^{-1}(y))$. Apply convex analysis (and duality). The cost functional is relaxed to the lower semicontinuous convex envelope (convex bi-dual) if it is not convex, in particular, $g$ is replaced by $\hat{g}:=g^{\ast\ast}$. Type A strategy solution is obtained in the convex case. Type B strategy solution is obtained in the relaxed case. Young's measure (convex combinations of states, often obtained as solutions to relaxed convex functionals in calculus of variations) is used to produce optimal solution in the relaxed case.
+\end{itemize}
+
+\end{itemize}
+
+
+The following is my personal comments on the paper.
+\begin{itemize}
+\item Pros
+
+\begin{itemize}
+\item A general enough setup yet a simple explicit solution.
+\item (Tedious) technicalities are addressed in details, laying solid ground work for further generalizations. \item Stylized computable examples covering all cases discussed in the paper.
+\end{itemize}
+
+\item Cons
+
+The perspective is too classic: the emphasis of the paper is on the \emph{form} of the solution instead of essential \emph{properties} of the problem and solutions. In particular, problems with varying input parameters are treated as standalone problems, while continuity of solutions with respect to data is not studied completely. The classical approach usually only permits symbolic computations (under the condition that one can compute subgradients, derivatives and solve equations relatively easily), rather than more general and efficient numerical calculations. (This case is quite unusual numerically: because Type B strategy is finite-dimensional (dimension $6$), one \emph{reduces} an infinite dimensional optimization problem to a finite dimensional one.)
+
+\end{itemize}
+
+
+The following are possible directions of generalizations or complements.
+\begin{itemize}
+\item Abstract properties of the problem: continuity/regularity of solutions with respect to inputs (under some appropriate topologies)
+\item Time-inhomogeneous resiliency function $h$
+\item Not increasing resiliency function $h$
+\item Noise order flows in addition to the large investor's orders
+\item Price-dependent deterministic resiliency function $h$
+\item Stochastic resiliency
+\item Time-inhomogeneous deterministic equilibrium shape of the limit order book
+\item Stochastic shape of the limit order book
+\item Efficient numerical methods to compute (almost) minimizers, echoing abstract properties of the problem
+\item Incorporate limit buy orders, and model market sell order flows
+\end{itemize}
 
 
 % jumps
 \section{Introducing jumps into the best ask price $A$}
 
 
+% not increasing resiliency
+\section{Not increasing resiliency function $h$}
+
+
 % time-dependent resiliency
 \section{Time-dependent resiliency function $h$}
 
 
-\section{}
 
 
 
