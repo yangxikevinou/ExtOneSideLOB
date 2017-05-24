@@ -59,7 +59,7 @@
 
 % Summary of original and directions of generalizations
 \section*{Summary of the original paper, and directions of generalizations}
-The following is a brief summary of the original paper OPTIMAL EXECUTION IN A GENERAL ONE-SIDED LIMIT-ORDER BOOK by Predoiu, Shaikhet, and Shreve, published on SIAM J. Finan. Math. in 2011.
+The following is a brief summary of the original paper OPTIMAL EXECUTION IN A GENERAL ONE-SIDED LIMIT-ORDER BOOK by Predoiu, Shaikhet, and Shreve, published on SIAM J. Finan. Math. in 2011\citep{predoiu2011optimal}. In this entire draft, if not further explained, the phrase ``the paper'', ``the original paper'', and etc. refers to \citet{predoiu2011optimal}.
 
 \begin{itemize}
 \item Setup
@@ -76,7 +76,7 @@ A single large investor buying a specified security with only market buy orders 
 
 \item Hypothetical (equilibrium) best ask price: $A=\{A_t\}_{t\in[0,T]}$, a continuous non-negative $\mathcal{H}^1$ martingale, i.e. $\E[A^\ast_T] < \infty$, where $A^\ast_t := \sup_{0\le s\le t} \abs{A_s}$. $A$ represents the hypothetical (equilibrium) best ask price as if there was zero trading activities from the beginning of the period. It is a quantitative description of the position of the ask side of the limit order book.
 
-\item Hypothetical (equilibrium) shape of limit order book: $F:\mathbb{R}_+ \to \mathbb{R}_+$, an non-decreasing caglad function specifying the cumulative quantity $F(x)$ of securities immediately available for purchase below the price level $x+A_t$ as if there was zero trading activity from the beginning of the period.
+\item Hypothetical (equilibrium) shape of limit order book: $F:\mathbb{R}_+ \to \mathbb{R}_+$, an non-decreasing caglad function specifying the cumulative quantity $F(x)$ of securities immediately available for purchase below the price level $x+A_t$ as if there was zero trading activity from the beginning of the period. We can imagine a entire static limit order book pegging to the hypothetical best ask price if there is no trading at all. More technically, if one were to apply PCA to the dynamics of the limit order book in the absence of arriving market buy orders, there is only one component (accounting for $100\%$ of explanatory power): the hypothetical best ask price.
 
 \item Resiliency function: $h:\mathbb{R}_+ \to \mathbb{R}_+$, a strictly increasing locally Lipschitz function, vanishing at the origin ($h(0)=0$) with limit at infinity greater than $\bar{X}/T$ ($h(+\infty) > \bar{X}/T$), representing the rate of replenishment $h(x)$ of limit sell orders at the quantity level $x$. It specifies the response of the ask side of the limit order book to the aggregate market buy order flow: $E_t = X_t - \int_0^t h(E_s) ds, \forall t\in[0,T]$, where $X_t$ is the cumulative market buy orders up to time $t$, and $E_t$ is the actual or observed quantity level in the equilibrium limit order book.
 
@@ -125,7 +125,10 @@ The following is my personal comments on the paper.
 
 \item Cons
 
-The perspective is too classic: the emphasis of the paper is on the \emph{form} of the solution instead of essential \emph{properties} of the problem and solutions. In particular, problems with varying input parameters are treated as standalone problems, while continuity of solutions with respect to data is not studied completely. The classical approach usually only permits symbolic computations (under the condition that one can compute subgradients, derivatives and solve equations relatively easily), rather than more general and efficient numerical calculations. (This case is quite unusual numerically: because Type B strategy is finite-dimensional (dimension $6$), one \emph{reduces} an infinite dimensional optimization problem to a finite dimensional one.)
+\begin{itemize}
+\item The perspective is too classic: the emphasis of the paper is on the \emph{form} of the solution instead of essential \emph{properties} of the problem and solutions. In particular, problems with varying input parameters are treated as standalone problems, while continuity of solutions with respect to data is not studied completely. The classical approach usually only permits symbolic computations (under the condition that one can compute subgradients, derivatives and solve equations relatively easily), rather than more general and efficient numerical calculations. (This case is quite unusual numerically: because Type B strategy is finite-dimensional (dimension $6$), one \emph{reduces} an infinite dimensional optimization problem to a finite dimensional one.)
+\item The simplified assumptions of deterministic time-homogeneous (morally a notion of ``equilibrium'' or ``semi-static'') shape of the book $F$ and resiliency $h$ might be good approximations to reality, but require more theoretical and empirical scrutiny.
+\end{itemize}
 
 \end{itemize}
 
@@ -136,7 +139,7 @@ The following are possible directions of generalizations or complements.
 \item Time-inhomogeneous resiliency function $h$
 \item Not increasing resiliency function $h$
 \item Noise order flows in addition to the large investor's orders
-\item Price-dependent deterministic resiliency function $h$
+\item Price-dependent deterministic resiliency function $h$ (it has been ``considered'' according to the paper)
 \item Stochastic resiliency
 \item Time-inhomogeneous deterministic equilibrium shape of the limit order book
 \item Stochastic shape of the limit order book
@@ -162,13 +165,34 @@ In short, one can relax the original model to the following setup easily (withou
 \item The investor's purchasing strategy, or portfolio holding $X$ is non-decreasing, cadlag, and \emph{predictable}.
 \end{itemize}
 
+The economic implication of this relaxation is to allow surprises in the best ask price, or a sudden unexpected shift in the position of the ask side of the limit order book.
+
 
 % not increasing resiliency
 \section{Not increasing resiliency function $h$ and continuity of the problem}
+The original paper assume that the resiliency function $h:\mathbb{R}_+ \to \mathbb{R}_+$ is \emph{strictly} increasing, locally Lipschitz and $h(0) = 0, h(+\infty) := \lim_{x\to +\infty} h(x) > \bar{X}/T$. Local Lipschitzness is necessary for the unique existence of the so-called volume-effect process $E$ (defined via ODE), which describes the quantity level of the book at which the actual/observed best ask price is. The condition $h(0)=0$ incorporates the notion of hypothetical equilibrium \emph{best} ask price, simply saying that there is no competition of liquidity provision at the best ask price level. The other two conditions are reasonable, but more for technical convenience rather than as necessary. We consider some relaxations of the monotonicity and the limit.
+
+
+\subsection{Relaxing the limit: inadequate resiliency function $h$}
+
+
+\subsection{Non-decreasing resiliency function $h$}
+First, assume that $h$ is merely increasing but not necessary strict while keeping others intact. In terms of economics, competition for liquidity provision is not intensified as more quantities of securities are consumed. This can reasonably happen if \emph{all} liquidity providers increase rate of replenishment only when the actual best ask price changes. Under the new assumption the quantity level $E_t = X_t - \int_0^t h(E_s) ds$ is still well-defined. The deductions in Section 2 and 3 are unchanged verbatim, in particular, we still have the restated simplified cost functional: $C(X) = \Phi(E_T) + \int_0^T \psi(E_t) h(E_t) dt$. The first key step in Section 4, definition of the function $g(y):= y\psi(h^{-1}(y))$, now requires attention as $h$ is no longer invertible. We mitigate the problem by using the lower-continuous (left-continuous) inverse $\underline{h}^{-1}$ of $h$, where $\underline{h}^{-1}(y) := \inf\{x\in\mathbb{R}_+ : h(x)\ge y\}$. (This is very intuitive: for the same rate of resiliency, i.e. marginal liquidity provision, the investor would like to trade at a lower level of the book to obtain a marginal price no higher.) Note that $h$ is actually continuous and hence surjective onto $[0,h(\bar{X})]$ if its domain is restricted to $[0,\bar{X}]$ (since $0\le E_t \le \bar{X}, \forall t\in[0,T]$), so we have $\underline{h}^{-1}(y) = \inf\{x\in\mathbb{R}_+ : h(x)=y\} = \min\{x\in\mathbb{R}_+ : h(x)=y\}$, and hence $h\left(\underline{h}^{-1}(y)\right) = y$ and $\underline{h}^{-1}(h(x)) \le x$. In other words, $\underline{h}^{-1}$ is the smallest right inverse of $h$, and it is increasing as well. With this relation in mind, we define $g(y):=y\psi(\underline{h}^{-1}(y))$ in place of Equation (4.1), and the following three observations (4.3), (4.4), and (4.5) hold with Equation (4.4) becoming
+\begin{align*}
+C(X) = \Phi(E_T) + \int_0^T \psi(E_t) h(E_t) dt \ge \Phi(E_T) + \int_0^T \psi(\underline{h}^{-1}(h(E_t))) h(E_t) dt = \Phi(E_T) + \int_0^T g(h(E_t)) dt
+\end{align*}
+with equality if $E_t \in \underline{h}^{-1}([0,\bar{X}]), \forall t\in[0,T]$ (only sufficient, as $\psi$ itself is not strictly increasing).
+
+Continuing to Subsection 4.1, here we first assume that $g$ defined above is convex. Most of Remark 4.1 is the same, with the exception of uniqueness of $\bar{e}$ such that $k(\bar{e}) = \bar{e} + h(\bar{e}) T = \bar{X}$. As long as $h$ is continuous, existence of such $\bar{e}$ is guaranteed, and we picked the smallest such $\bar{e}$, also guaranteed by continuity.
+
+
+
 
 
 % time-dependent resiliency
 \section{Time-dependent resiliency function $h$}
+
+\subsection{A digression to calculus of variations: Lagrangian, Hamiltonian, and DEs}
 
 
 % references
