@@ -226,7 +226,7 @@ Let $f:\mathbb{R}_+ \to \mathbb{R}_+$ be a continuous non-negative function defi
 
 Leveraging on the special case of non-decreasing $h$ above, we can tackle non-monotone $h$ easily by considering $\bar{h}$. Inequality (4.4) $C(X) = \Phi(E_T) + \int_0^T \psi(E_t) h(E_t) dt \ge \Phi(E_T) + \int_0^T g(h(E_t)) dt$ remains true, and the equality is attained when $E_t \in \underline{h}^{-1}([0,h(\bar{X})])$ for a.e. $t\in[0,T]$. But for such $E_t$, we have $h(E_t) = \bar{h}(E_t)$, and hence we can minimize the cost functional with $\bar{h}$ instead. In Remark 4.1, a Type A strategy will be admissible if $E^A_T \in[\bar{e},\bar{X}]$, where $\bar{e}$ satisfies $\bar{k}(\bar{e}) = \bar{X}$ and $\bar{k}(e) := e + \bar{h}(e) T$. Such $\bar{e} \in [0,\bar{X}]$ is well-defined since $\bar{k}$ is continuous and strictly increasing. The proof of Theorem 4.2 and Theorem 4.5 follow the special case that $h$ is non-decreasing.
 
-To end this subsection, we can impose the following less stringent conditions on $h$ while keeping the original conclusions:
+To end this subsection, we can impose the following less stringent conditions on the resiliency function $h$ while keeping the original conclusions:
 \begin{itemize}
 \item $h(0)=0$
 \item $h$ is locally Lipschitz
@@ -236,8 +236,28 @@ The financial intuition of the solution is straightforward: for the same level o
 
 % time-dependent resiliency
 \section{Time-dependent resiliency function $h$}
+So far, we have relaxed the model to include:
+\begin{itemize}
+\item $A$ is a cadlag (nonnegtaive) $\mathcal{H}^1$ martingale;
+\item $X$ is non-decreasing, cadlag and predictable;
+\item $h$ is locally Lipschitz and $h(0)=0$.
+\end{itemize}
 
-\subsection{A digression to calculus of variations: Lagrangian, Hamiltonian, and DEs}
+The next natural generalization is to consider time-inhomogeneous resiliency $h:[0,T]\times \mathbb{R}_+ \to \mathbb{R}_+$, with $h(t,x)$ representing the replenishment speed at time $t$ if the book is at the quantity level $x$. It is immediate to see that we should require $h(t,\cdot)$ to be locally Lipschitz and $h(t,0)=0$ for $t\in[0,T]$ (or weaker, a.e.). However, it is not clear what regularity condition we should impose for the time variable $t$, i.e. for the function $t\mapsto h(t,\cdot)$, which describes the evolution of the resiliency function. We delay the technicalities for the time being, and informally discuss alternate solution techniques for the original problem. This will help us better understand the time-inhomogeneous case.
+
+\subsection{A digression to calculus of variations: Lagrangian, Hamiltonian, and duality}
+This subsection is to introduce Euler-Lagrangian equation, Hamilton-Jacobi-Bellman equation, and dual function for the original problem (possibly with time-inhomogeneous resiliency). We focus on the big pictures and omit details at the expense of mathematical rigor.
+
+Suppose that resiliency function $h:[0,T]\times \mathbb{R}_+ \to \mathbb{R}_+$ is time-dependent. We write $h_t$ for $h(t,\cdot)$ for notational ease, and could define $\overline{h_t}$ and $\underline{h_t}^{-1}$ as before.
+
+
+\subsection{Separable resiliency and time-homogeneous elasticity: a special case}
+
+
+\subsection{Critical point minimizers and spoofing}
+
+
+\subsection{General existence via abstract properties: continuity and compactness}
 
 
 % references
