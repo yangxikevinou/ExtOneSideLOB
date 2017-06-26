@@ -135,7 +135,7 @@ The following is my personal comments on the paper.
 
 The following are possible directions of generalizations or complements.
 \begin{itemize}
-\item Abstract properties of the problem: continuity/regularity of solutions with respect to inputs (under some appropriate topologies)
+\item Abstract properties and robustness of the problem: continuity/regularity of solutions with respect to inputs (under some appropriate topologies)
 \item Time-inhomogeneous resiliency function $h$
 \item Not increasing resiliency function $h$
 \item Noise order flows in addition to the large investor's orders
@@ -224,7 +224,7 @@ Let $f:\mathbb{R}_+ \to \mathbb{R}_+$ be a continuous non-negative function defi
 \end{enumerate}
 \end{lem}
 
-Leveraging on the special case of non-decreasing $h$ above, we can tackle non-monotone $h$ easily by considering $\bar{h}$. Inequality (4.4) $C(X) = \Phi(E_T) + \int_0^T \psi(E_t) h(E_t) dt \ge \Phi(E_T) + \int_0^T g(h(E_t)) dt$ remains true, and the equality is attained when $E_t \in \underline{h}^{-1}([0,h(\bar{X})])$ for a.e. $t\in[0,T]$. But for such $E_t$, we have $h(E_t) = \bar{h}(E_t)$, and hence we can minimize the cost functional with $\bar{h}$ instead. In Remark 4.1, a Type A strategy will be admissible if $E^A_T \in[\bar{e},\bar{X}]$, where $\bar{e}$ satisfies $\bar{k}(\bar{e}) = \bar{X}$ and $\bar{k}(e) := e + \bar{h}(e) T$. Such $\bar{e} \in [0,\bar{X}]$ is well-defined since $\bar{k}$ is continuous and strictly increasing. The proof of Theorem 4.2 and Theorem 4.5 follow the special case that $h$ is non-decreasing.
+Leveraging on the special case of non-decreasing $h$ above, we can tackle non-monotone $h$ easily by considering $\bar{h}$. Inequality (4.4) $C(X) = \Phi(E_T) + \int_0^T \psi(E_t) h(E_t) dt \ge \Phi(E_T) + \int_0^T g(h(E_t)) dt$ remains true, and the equality is attained when $E_t \in \underline{h}^{-1}([0,\bar{h}(\bar{X})])$ for a.e. $t\in[0,T]$. But for such $E_t$, we have $h(E_t) = \bar{h}(E_t)$, and hence we can minimize the cost functional with $\bar{h}$ instead. In Remark 4.1, a Type A strategy will be admissible if $E^A_T \in[\bar{e},\bar{X}]$, where $\bar{e}$ satisfies $\bar{k}(\bar{e}) = \bar{X}$ and $\bar{k}(e) := e + \bar{h}(e) T$. Such $\bar{e} \in [0,\bar{X}]$ is well-defined since $\bar{k}$ is continuous and strictly increasing. The proof of Theorem 4.2 and Theorem 4.5 follow the special case that $h$ is non-decreasing.
 
 To end this subsection, we can impose the following less stringent conditions on the resiliency function $h$ while keeping the original conclusions:
 \begin{itemize}
@@ -246,19 +246,49 @@ So far, we have relaxed the model to include:
 The next natural generalization is to consider time-inhomogeneous resiliency $h:[0,T]\times \mathbb{R}_+ \to \mathbb{R}_+$, with $h(t,x)$ representing the replenishment speed at time $t$ if the book is at the quantity level $x$. It is immediate to see that we should require $h(t,\cdot)$ to be locally Lipschitz and $h(t,0)=0$ for $t\in[0,T]$ (or weaker, a.e.). However, it is not clear what regularity condition we should impose for the time variable $t$, i.e. for the function $t\mapsto h(t,\cdot)$, which describes the evolution of the resiliency function. We delay the technicalities for the time being, and informally discuss alternate solution techniques for the original problem. This will help us better understand the time-inhomogeneous case.
 
 \subsection{A digression to calculus of variations: Lagrangian, Hamiltonian, and duality}
-This subsection is to introduce Euler-Lagrangian equation, Hamilton-Jacobi-Bellman equation, and dual function for the original problem (possibly with time-inhomogeneous resiliency). We focus on the big pictures and omit details at the expense of mathematical rigor.
+This subsection is to introduce Euler-Lagrangian equation, Hamilton-Jacobi-Bellman equation, and dual function for the original problem (possibly with time-inhomogeneous resiliency). We focus on the big pictures and omit details at the expense of mathematical rigor. In addition, we don't claim that any standalone method could completely solve the original problem.
 
-Suppose that resiliency function $h:[0,T]\times \mathbb{R}_+ \to \mathbb{R}_+$ is time-dependent. We write $h_t$ for $h(t,\cdot)$ for notational ease, and could define $\overline{h_t}$ and $\underline{h_t}^{-1}$ as before.
+Suppose that resiliency function $h:[0,T]\times \mathbb{R}_+ \to \mathbb{R}_+$ is time-dependent. We write $h_t$ for $h(t,\cdot)$ for notational ease, and could define $\overline{h_t}$ and $\underline{h_t}^{-1}$ as before. Moreover, we can set $g_t(y) := y \psi(\underline{h_t}^{-1}(y))$ for $y\in [0,\overline{h_t}(\bar{X})]$ and $t\in[0,T]$. Assume necessary regularity (continuity or differentiability) for functions whenever needed in the following computations.
+
+The first way to minimize the functional $C(X) = \Phi(E_T) + \int_0^T g_t(h_t(E_t)) dt$ is to consider variations. Suppose that a minimizer is known, any perturbed admissible strategy will cost more than the minimizer. This idea leads to the Euler-Lagrange equation, which is essential a critical point condition for the cost functional at the minimizer. Symbolically, let $E$ be a minimizer and $\delta E$ be any admissible direction of variation in the tangent space of plausible volume-effect processes, then the critical point condition is given by
+\begin{align*}
+0 =& \frac{dC}{dE}(\delta E) = \partial \Phi(E_T) \delta E_T + \int_0^T \partial g_t(h_t(E_t)) \partial h_t (E_t) \delta E_t dt \\
+=& \partial \Phi(E_T) \left(\delta X_T - \int_0^T \partial h_t(E_t) \delta E_t dt \right) + \int_0^T \partial g_t(h_t(E_t)) \partial h_t (E_t) \delta E_t dt = \int_0^T (\partial g_t(h_t(E_t)) - \partial \Phi(E_T))\partial h_t (E_t) \delta E_t dt
+\end{align*}
+In the computation above, we invoked the constraint that $X_T \equiv \bar{X}$ so $\delta X_T \equiv 0$. In ``nice'' cases, this requires that $\partial g_t(h_t(E_t)) - \partial \Phi(E_T)$ for a.e. $t\in [0,T]$, i.e. $\partial g_t(h_t(E_t))$ is a constant independent of time $t$. Notice that if $h$ is time-homogeneous, then $\partial g(h(E_t))$ is a constant means that $E_t$ is a constant, which reduces to a Type A strategy in the original paper. Of course, a Type B strategy does not satisfy this constant $E$ condition, but it has a piecewise constant $E$. To mitigate this glitch, one needs to consider distributional derivatives instead of classical ones. Nonetheless, the Euler-Lagrange equation does gives us hints of the optimum. Other than the issue of regularity of functions, one do have to keep in mind that the Euler-Lagrange equation only specifies critical points (if interpreted classically), but minimizers are not necessarily critical points and critical points are not necessarily minimizers. Both coincides only at ``special'' cases, for example, Subsection 4.1 in the original paper, in which a Type A strategy is both a minimizer and a critical point of the cost functional.
+
+The second way to minimize the functional $C$ is dynamic programming. Instead of considering a single minimization problem, dynamic programming studies a family of problems parametrized by state variables, connects all these problems using the dynamic programming principle, and derives a PDE called Hamilton-Jacobi-Bellman (HJB) equation satisfied by the minimal values of parametrized problems. We use the time $t$, the quantity level of the book $e$, and remaining quantity $x$ to purchase as state variables. Let $v(t,e,x)$ stands for the \emph{minimal} purchasing cost of $x$ \emph{additional} shares when the time is $t$ and the book is at level $e$, i.e. $v(t,e,x) := \inf \left\{ \Phi(E_T) - \Phi(e) + \int_t^T g_s(h_s(E_s)) ds : E_{t} = e, E_T - e + \int_t^T h_s(E_s) ds = x \right\}$. The minimal $C(X)$ we are looking for is $v({0^-},0,\bar{X})$ (as we have $E_{0^-}=0$ to allow possible jumps at time $0$). It is clear by definition that $v(T,e,x)=0$ if $x\le 0$ and $v(T,e,x)=+\infty$ if $x>0$. For other parametrized minimizations, dynamic programming principle proposes that the Hamiltonian $v(t,E_{t},\bar{X}-X_{t}) + \Phi(E_{t}) + \int_0^t g_s(h_s(E_s)) ds$ be a non-decreasing function of time $t$ for all admissible strategies $X$, and be constant in time $t$ for optimal strategy $X$. In particular, for jumps, we have 
+\begin{align*}
+v(t^-, E_{t^-}, \bar{X}-X_{t^-}) + \Phi(E_{t^-}) &= \inf_{\Delta X_t \ge 0} \left\{ v(t,E_t,\bar{X}-X_t) + \Phi(E_t) \right\} \\
+&= \inf_{\Delta X_t \ge 0} \left\{ v(t, E_{t^-}+\Delta X_t, \bar{X}-X_{t^-}-\Delta X_t) + \Phi(E_{t^-} + \Delta X_t) \right\},
+\end{align*}
+that is $v(t^-,e,x) + \Phi(e) = \inf_{a\ge 0} \left\{v(t,e+a,x-a) + \Phi(e+a) \right\}$. At the instance before terminal time $T$, one must have $v(T^-,e,x)=\Phi(e+x)-\Phi(e)$ if $x>0$ and zero otherwise, as the only way to achieve the purchasing target (avoiding infinite cost) is to buy $a=x>0$ shares immediately. In differential form (ignoring possible jumps), using the equation $X_t = E_t + \int_0^t h_s(E_s) ds$, one has
+\begin{align*}
+0 &= \partial_t v + g_t(h_t(e)) + \inf_{a\ge 0} \left\{ (\partial \Phi(e) + \partial_e v) (a-h_t(e)) - a \partial_x v \right\} \\
+&= \partial_t v + g_t(h_t(e)) + \inf_{a\ge 0} \left\{ (\partial \Phi(e) + \partial_e v - \partial_x v) a - h_t(e) (\partial \Phi(e) + \partial_e v) \right\} = \partial_t v - h_t(e) \partial_e v + g_t(h_t(e)) - h_t(e) \partial \Phi(e),
+\end{align*}
+since either $a=0$ or $\partial \Phi(e) + \partial_e v - \partial_x v = 0$. To have the infimum well-posed, one must impose that $\partial \Phi(e) + \partial_e v - \partial_x v \ge 0$. If $\partial \Phi(e) + \partial_e v - \partial_x v > 0$, then it is clear that $a=0$, i.e. the rate of purchase is zero at those particular moments. However, if $\partial \Phi(e) + \partial_e v - \partial_x v = 0$, then the HJB equation \emph{alone} does not give us any information about the optimal trading strategy, and we have to infer this piece of information from something else. In general HJB equation is difficult to solve explicitly, but if one has a solution with sufficient regularity in some special case, then a standard verification argument will give us the minimal cost of the problem. Moreover, if one can infer the optimal trading strategy from HJB, then the strategy is usually given in the so-called feedback form, i.e. a function in terms of the state variables. On the contrary, one does not obtain a feedback form strategy from the Euler-Lagrange equation.
+
+Both ways above involve solving differential equations, which rely on some regularities of the solutions and hence some restrictions of the inputs. A promising way to get around the technicalities of differential equations is (convex) duality. In addition to the original constrained optimization problem which is called the primal problem, the method introduces a related problem called the dual problem which plays the same role as Lagrange multiplier in classical calculus. The advantage of duality method is its minimal assumptions on regularities of functions, and all one has to do is to check zero duality gap. Let $(\lambda,\mu)$ be the dual variable, and define $D(\lambda,\mu) := \inf \left\{ \Phi(E_T) + \int_0^T g_s(h_s(E_s)) ds - \lambda \int_0^T h_s(E_s) ds - \mu E_T : X_{0^-} =0, E_t = X_t - \int_0^t h_s(E_s) ds \right\}$. Denote the convex duals of $\Phi$ and $g_s$ by $\Phi^\ast(y):=\sup_{x\ge 0}\left\{xy - \Phi(x)\right\}$ and $g_s^\ast(y):=\sup_{x\ge 0}\left\{xy - g_s(x)\right\}$ respectively. Then for admissible trading strategies $X$, we have
+\begin{align*}
+C(X) &= \Phi(E_T) + \int_0^T g_s(h_s(E_s)) ds = \Phi(E_T) + \int_0^T g_s(h_s(E_s)) ds - \lambda \int_0^T h_s(E_s) ds - \lambda E_T + \lambda \bar{X} \\
+& \ge D(\lambda, \lambda) + \lambda \bar{X} \left( \ge -\Phi^\ast(\lambda) - \int_0^T g_s^\ast(\lambda) ds + \lambda \bar{X} \right)
+\end{align*}
+Taking supremum over all $\lambda \ge 0$ of the right hand side, we have a lower bound on the minimum trading cost. If there is zero duality gap, i.e. equality could be achieved, then one can figure out the optimal trading strategy by first finding the maximizer $\lambda^\ast$ of $\sup_{\lambda \ge 0}\left\{D(\lambda,\lambda) + \lambda \bar{X} \right\}$, and then the minimizer of $D(\lambda^\ast, \lambda^\ast)$. It seems at first that we complicate the problem by layering over one more optimization, but the dual problem involving $D(\lambda,\lambda)$ is actually far simpler as it is merely one-dimensional. In the case that the resiliency function $h(s,x)$ is time-homogeneous and so is $g_s = g$, the dual function in the parenthesis above can be written down explicitly. A sufficient condition for zero-duality gap is that $g$ is convex. We believe that the original paper was inspired by this duality approach to consider Type A strategy first. It should be noted that in other cases, the issue of duality gap is quite delicate and the one that requires most attention.
+
+Here is a brief review of this subsection before we move on to tackle the general case of time-inhomogeneous resiliency. We have outlined three methods to solve the problem, each with its own convenience and technicalities. Even though these methods may not assemble to a full solution, they would serve as starting points and give us significant inspirations.
 
 
 \subsection{Separable resiliency and time-homogeneous elasticity: a special case}
 
 
-\subsection{Critical point minimizers and spoofing}
+\subsection{Critical point minimizers and spoofing (permitting limit sell)}
 
 
-\subsection{General existence via abstract properties: continuity and compactness}
+\subsection{General existence and robustness via abstract properties: continuity and compactness}
 
+
+\section{Introducing noises to order flows and/or resiliency}
 
 % references
 \bibliographystyle{plainnat}
