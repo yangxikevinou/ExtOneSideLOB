@@ -243,7 +243,7 @@ So far, we have relaxed the model to include:
 \item $h$ is locally Lipschitz and $h(0)=0$.
 \end{itemize}
 
-The next natural generalization is to consider time-inhomogeneous resiliency $h:[0,T]\times \mathbb{R}_+ \to \mathbb{R}_+$, with $h(t,x)$ representing the replenishment speed at time $t$ if the book is at the quantity level $x$. It is immediate to see that we should require $h(t,\cdot)$ to be locally Lipschitz and $h(t,0)=0$ for $t\in[0,T]$ (or weaker, a.e.). However, it is not clear what regularity condition we should impose for the time variable $t$, i.e. for the function $t\mapsto h(t,\cdot)$, which describes the evolution of the resiliency function. We delay the technicalities for the time being, and informally discuss alternate solution techniques for the original problem. This will help us better understand the time-inhomogeneous case.
+The next natural generalization is to consider time-inhomogeneous resiliency $h:[0,T]\times \mathbb{R}_+ \to \mathbb{R}_+$, with $h(t,x)$ representing the replenishment speed at time $t$ if the book is at the quantity level $x$. It is immediate to see that we should require $h(t,\cdot)$ to be locally Lipschitz uniformly in time $t$ (i.e. with the same Lipschitz constant for varying $t$, which guarantees the unique existence of the volume effect process $E$ given via the differential equation) and $h(t,0)=0$ for $t\in[0,T]$ (or weaker, a.e.). However, it is not clear what regularity condition we should impose for the time variable $t$, i.e. for the function $t\mapsto h(t,\cdot)$, which describes the evolution of the resiliency function. We delay the technicalities for the time being, and informally discuss alternate solution techniques for the original problem. This will help us better understand the time-inhomogeneous case.
 
 \subsection{A digression to calculus of variations: Lagrangian, Hamiltonian, and duality}
 This subsection is to introduce Euler-Lagrangian equation, Hamilton-Jacobi-Bellman equation, and dual function for the original problem (possibly with time-inhomogeneous resiliency). We focus on the big pictures and omit details at the expense of mathematical rigor. In addition, we don't claim that any standalone method could completely solve the original problem.
@@ -283,7 +283,7 @@ Here is a brief review of this subsection before we move on to tackle the genera
 Using the three methods above, we discover one special case of time-dependent resiliency, whose corresponding optimal strategy could be achieved by a Type B one in the original paper. We think it is worth documenting, and introduce the following two concepts. Throughout this subsection, we impose that $A$ is a cadlag (nonnegtaive) $\mathcal{H}^1$ martingale, and $X$ is non-decreasing, cadlag and predictable;
 
 \begin{defn}[Elasticity of resiliency and separable resiliency]
-Let $h:[0,T]\times \mathbb{R}_+ \to \mathbb{R}_+$ be a resiliency function such that $h(t,0)=0$ and $h(t,\cdot)$ is locally Lipschitz for all $t\in[0,T]$ (and hence $\partial_x h(t,x)$ exists for almost everywhere $x$ and all $t$). The quantity $\frac{\partial_x h(t,x)}{h(t,x)} = \partial_x \ln h(t,x)$ is called the elasticity of resiliency at time $t$ and depth $x$. If the resiliency is of the form $h(t,x) = \zeta(t) H(x)$ for some nonnegative function $\zeta:[0,T] \to \mathbb{R}_+$ and some nonnegative locally Lipschitz function $H:\mathbb{R}_+ \to \mathbb{R}_+$ with $H(0)=0$, then $h$ is called a separable resiliency function.
+Let $h:[0,T]\times \mathbb{R}_+ \to \mathbb{R}_+$ be a resiliency function such that $h(t,0)=0, \forall t\in[0,T]$ and the collection $\{h(t,\cdot)\}_{t\in[0,T]}$ is locally Lipschitz uniformly in time (and hence $\partial_x h(t,x)$ exists for almost everywhere $x$ and all $t$). The quantity $\frac{\partial_x h(t,x)}{h(t,x)} = \partial_x \ln h(t,x)$ is called the elasticity of resiliency at time $t$ and depth $x$. If the resiliency is of the form $h(t,x) = \zeta(t) H(x)$ for some bounded nonnegative function $\zeta:[0,T] \to \mathbb{R}_+$ and some nonnegative locally Lipschitz function $H:\mathbb{R}_+ \to \mathbb{R}_+$ with $H(0)=0$, then $h$ is called a separable resiliency function.
 \end{defn}
 
 We remark that a resiliency function is separable if and only if its elasticity is time-homogeneous. The significance of separable resiliency and hence time-homogeneous elasticity is reflected in the following theorem.
@@ -299,10 +299,94 @@ C(X) &= \Phi(E_T) + \int_0^T \psi(E_s) h(s,E_s) ds = \Phi(E_T) + \int_0^T \psi(E
 \end{align*}
 The dynamic of the book and the cost functional are of the same form as in the case of time-homogeneous resiliency, if the clock follows the measure given by $\zeta(t)dt$ instead of the usual Lebesgue measure $dt$. Under the tweaked clock, the resiliency $H$ is homogeneous, and we invoke Theorem 4.2 and 4.5 of the original paper to get the new theorem for separable resiliency.
 
+\begin{rem}
 It is not hard to see why we name this special case of time-dependence of resiliency ``separable'' after the definition and the proof. But what leads us to consider such form of time-dependence at the very first place? Before finishing this subsection, we give our thought process, which is neither rigorous nor comprehensive. Assuming that functions possess sufficient regularities for us to take derivatives, Euler-Lagrange equation in the previous subsection mandates that a minimizer will make $\partial g_t(h_t(E_t))$ a constant. Suppose that $h_t$ is strictly increasing, and recall that $g_t(y) := y \psi(h_t^{-1}(y))$, we have that $\partial g_t(y) = \psi(h_t^{-1}(y)) + \frac{y \partial \psi(h_t^{-1}(y))}{\partial h_t(h_t^{-1}(y))}$. Thus, $\partial g_t(h_t(E_t)) = \psi(E_t) + \frac{\partial \psi(E_t)}{\partial \ln h_t(E_t)}$ if derivatives make sense. It is obvious that one only needs homogeneous elasticity instead of homogeneous resiliency for a (piecewise) constant volume effect process $E_t = e, \forall t\in(t_0,t_1)$ to be a minimizer. This is the very point where we start investigating separable resiliency.
+\end{rem}
 
 
 \subsection{Critical point minimizers and spoofing (permitting limit sell)}
+The approach of Euler-Lagrange equation also reveals another interesting phenomenon not present in the case of time-homogeneous resiliency: if the investor is allowed to submit limit sell orders \emph{at the actual best ask price without changing the equilibrium shape of the book} in addition to market buy orders, then he may lower his purchasing cost in some cases of time-inhomogeneous elasticity but never in the case of time-homogeneous elasticity. We shall explain in the following lemma ({\color{red} unfinished, technical obstacle in defining the problem}) the unnecessity of limit sells for time-homogeneous resiliency (and hence elasticity), and exhibit an example in which submitting limit sell orders will strictly lower the purchasing cost. In a nutshell, the reason why limit sells may lower purchasing costs is that the investor may improve the marginal prices paid by undercutting the actual ask prices, at the expense of a slower rate of purchasing.
+
+{\color{red}
+In this subsection, we shall made the following assumptions:
+\begin{itemize}
+\item $A$ is a cadlag (nonnegative) $\mathcal{H}^1$ martingale;
+\item $X$ is \emph{of finite variation}, cadlag and predictable, with $X_{0^-}=0$, $X_T = \bar{X}$ and $X_t \ge 0, \forall t\in[0,T]$;
+\item $h$ is nonnegative, $h(\cdot, 0) \equiv 0$ and $\{h(t,\cdot)\}_{t\in[0,T]}$ is locally Lipschitz uniformly in time $t$.
+\end{itemize}
+In particular, the equilibrium shape of the book is unchanged and still described by the cost function $\Phi$, and the volume effect process $E$ still follows the dynamic $E_t = X_t - \int_0^t h(s,E_s) ds$ and also has finite variation, in which we interpret $X$ as \emph{the difference between cumulative market buy orders and outstanding limit sell orders submitted by the investor}. The nonnegative holding constraint forbids short-selling (though short-selling or undercutting the hypothetical best ask price $A$ would not benefit the investor anyway). Since the investor is the only liquidity demander of the ask side of the book, the investor has to cancel, or equivalently trade against, his \emph{own} outstanding limit sell orders by the end of the trading interval, and hence his stock holding is the same as his cumulative market buy orders at time $T$, i.e. $X_T \equiv \bar{X}$. Under these assumptions and the restriction that the investor has zero outstanding limit orders at time $T$, the purchasing cost is the same as before: $C(X) = \Phi(E_T) + \int_0^T \psi(E_t) h(t,E_t) dt$. (However, I haven't found a way to write down the constraint that the quantity of outstanding limit orders is zero. In general, we have that $C(X) \ge \Phi(E_T) + \int_0^T \psi(E_t) h(t,E_t) dt$.)
+
+\begin{lem}[Unnecessity of limit sells for homogeneous resiliency]
+If the resiliency $h:[0,T]\times \mathbb{R}_+ \to \mathbb{R}_+$ is time-homogeneous, i.e. $h(t,\cdot) = h(0,\cdot), \forall t\in[0,T]$, then there exists a Type B strategy $X$ that minimizes trading cost $C(X)$ over all strategies allowing limit sell orders at the actual best ask price, and this optimal strategy is the same as the one if limit sell orders are not allowed.
+\end{lem}
+
+\begin{proof}
+A technically sound proof is possible only after the new problem is properly defined. I have some difficulties defining the problems now.
+\end{proof}
+
+In the case when limit sell is not allowed, if the optimal volume effect process $\hat{E}$ is a critical point of the functional $E\mapsto C(X)$, then it is also the optimum in the case when the investor can post limit sells. We call such optimum a critical point minimizer. The optima proposed in the original paper are actually all critical point minimizers, so posting limit sells would not further reduce trading costs. 
+}
+
+To finish this subsection, we showcase an example with time-inhomogeneous elasticity, in which there is no critical point minimizers if limit sells are prohibited, and the critical point minimizer can only be attained by submitting a limit sell order.
+
+\begin{eg}[Critical point minimizer via limit sell orders]
+As in the original paper, assume that $A\equiv 0$ without loss of generality. Let
+\begin{align*}
+& \Phi(x) := \frac{1}{2} x^2, \textrm{ or equivalently } \psi(x) = \partial \Phi(x) = x, \textrm{ and } \\
+& h(t,x) :=
+\begin{cases}
+H_1(x) := H(2x), & t\in[0,T/2) \\
+H_2(x) := H(x), & t\in[T/2,T]
+\end{cases}, \textrm{ where }
+H(x) :=
+\begin{cases}
+ex, & 0\le x\le 1 \\
+e^x, & x>1
+\end{cases} \textrm{ is strictly increasing and $C^1$}.
+\end{align*}
+Then $g(t,y) := y\psi(h_t^{-1}(y)) =
+\begin{cases}
+G_1(y) := y\psi(H_1^{-1}(y)) = \frac{1}{2}y H^{-1}(y), & t\in[0,T/2) \\
+G_2(y) := y\psi(H_2^{-1}(y)) = y H^{-1}(y), & t\in[T/2,T] \\
+\end{cases}$.
+Compute the inverse $H^{-1}(y) =
+\begin{cases}
+y/e, & 0\le y\le e \\
+\ln y, & y>e
+\end{cases}$, and the derivative $\frac{d}{dy}\left(yH^{-1}(y)\right) = H^{-1}(y) + \frac{y}{H'(H^{-1}(y))} =
+\begin{cases}
+2y/e, & 0\le y \le e \\
+\ln y + 1, & y>e
+\end{cases}$, which is also strictly increasing and continuous, we know that both $G_1$ and $G_2$ are strictly convex with $2 G_1'(y) = G_2'(y) = \frac{d}{dy}\left(y H^{-1}(y)\right)$. Therefore, we have the following by Jensen's inequality:
+\begin{align*}
+C(X) &= \Phi(E_T) + \int_0^T g(t,h(t,E_t)) dt = \Phi(E_T) + \int_0^{T/2} G_1(H_1(E_t)) dt + \int_{T/2}^T G_2(H_2(E_t)) dt \\
+&\ge \Phi(E_T) + \frac{T}{2} G_1\left(\frac{1}{T/2} \int_0^{T/2} H_1(E_t) dt\right) + \frac{T}{2} G_2\left(\frac{1}{T/2} \int_{T/2}^T H_2(E_t) dt\right) \\
+&= \Phi(E_T) + \frac{T}{2} G_1\left(\frac{X_{T/2} - E_{T/2}}{T/2}\right) + \frac{T}{2} G_2\left(\frac{(X_T - E_T) - (X_{T/2} - E_{T/2})}{T/2}\right) \\
+&= \Phi(\bar{X}-Y_1-Y_2) + \frac{T}{2} G_1\left(\frac{Y_1}{T/2}\right) + \frac{T}{2} G_2\left(\frac{Y_2}{T/2}\right) =: G(Y_1, Y_2),
+\end{align*}
+where $Y_1 := X_{T/2} - E_{T/2}$, $Y_2 := (X_T - E_T) - (X_{T/2} - E_{T/2})$, and equality holds if and only if
+$$E_t =
+\begin{cases} E_0 = H_1^{-1}\left( \frac{Y_1}{T/2} \right) = \frac{1}{2} H^{-1}\left( \frac{Y_1}{T/2} \right) , & \forall t\in[0,T/2) \\
+E_{T/2} = H_2^{-1}\left( \frac{Y_2}{T/2} \right) = H^{-1}\left( \frac{Y_2}{T/2} \right), & \forall t\in[T/2,T)
+\end{cases}.$$
+So the minimizing volume effect process $E$ must be constant in the interiors of both halves respectively and satisfy the equations above, no matter whether limit sells are allowed or not. We shall assume these equations from here on. Observe that the function $G$ in this case is strictly convex and $C^1$, and hence its minimum is attained at the unique critical point in the interior (if any) or on the boundary. Differentiating $G$ to solve for critical points, we have
+$$G_1'\left(\frac{Y_1}{T/2}\right) = \partial \Phi(\bar{X}-Y_1-Y_2) = G_2'\left(\frac{Y_2}{T/2}\right).$$
+This system of equations has a well-defined solution which minimizes the function $G$ over all possible pairs of $(Y_1, Y_2)$. From our computations above, note that $G_i' \ge H_i^{-1}$ and $\partial \Phi(x) = \psi(x) = x$, we have that $E_T = \bar{X}-Y_1-Y_2 = \partial \Phi(\bar{X}-Y_1-Y_2) = G_i'\left(\frac{Y_i}{T/2}\right) \ge H_i^{-1}\left(\frac{Y_i}{T/2}\right) = \begin{cases} E_0, & i=1 \\ E_{T/2}, & i=2 \end{cases}$. This inequality guarantees that there is no outstanding limit order of the investor at the terminal time if limit orders are ever used to implement the critical point minimizer. If the investor cannot use limit sell orders, then the jumps at time $T/2$ and $T$ cannot be negative, and we must impose the additional condition $E_0 = E_{\frac{T}{2}^-}\le E_{\frac{T}{2}} = E_{T^-} \le E_T$ in looking for a minimum.
+
+Now we are ready to give a concrete numerical example whose critical point minimizer cannot be achieved without a discrete limit sell order at time $T/2$. For convenience, set $T:=2$ so that $T/2 =1$. Let $\bar{X} := 2+e+e^3$. We claim that $Y_1 = e^3$ and $Y_2 = e$, or equivalently $E_t =
+\begin{cases}
+E_0 = 3/2, & t\in[0,1) \\
+E_1 = 1, & t\in[1,2) \\
+E_2 = 2, & t=2
+\end{cases}$
+is the critical point minimizer. The investor has to post a limit sell order of size $1/2$ at time $1$ to implement this strategy. To verify it is indeed the minimizer, it suffices to check the system of equations above:
+\begin{align*}
+G_1'\left(\frac{Y_1}{T/2}\right) = \frac{1}{2}(\ln e^3 + 1) &= 2, & E_0 = H_1^{-1}\left(\frac{Y_1}{T/2}\right) = \frac{1}{2}\ln e^3 = 3/2 \\
+\partial \Phi(\bar{X}-Y_1-Y_2) &= 2, & E_2 = \bar{X}-Y_1-Y_2 = 2 \\
+G_2'\left(\frac{Y_2}{T/2}\right) = \ln e + 1 &= 2, & E_1 = H_2^{-1}\left(\frac{Y_2}{T/2}\right) = \ln e = 1
+\end{align*}
+The corresponding minimal trading cost is then $C(X) = \Phi(2) + \frac{1}{2} e^3 \ln e^3 + e \ln e = 2+e+\frac{3}{2}e^3$.
+\end{eg}
 
 
 \subsection{General existence and robustness via abstract properties: continuity and compactness}
