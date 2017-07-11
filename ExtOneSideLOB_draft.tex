@@ -231,7 +231,7 @@ To end this subsection, we can impose the following less stringent conditions on
 \item $h(0)=0$
 \item $h$ is locally Lipschitz
 \end{itemize}
-The financial intuition of the solution is straightforward: for the same level of marginal liquidity supply (i.e. resiliency) which is entirely determined by the quantity level of the book, the investor would select the lowest possible quantity level (whose mathematical counterpart is lower-semicontinuous inverse) so as to minimize margin execution price.
+The financial intuition of the solution is straightforward: for the same level of marginal liquidity supply (i.e. resiliency) which is entirely determined by the quantity level of the book, the investor would select the lowest possible quantity level (whose mathematical counterpart is lower semicontinuous inverse) so as to minimize margin execution price.
 
 
 % time-dependent resiliency
@@ -390,9 +390,107 @@ The corresponding minimal trading cost is then $C(X) = \Phi(2) + \frac{1}{2} e^3
 
 
 \subsection{General existence and robustness via abstract properties: continuity and compactness}
+The past two subsections are devoted to special cases of the problem with time-dependent resiliency function. It is fortunate that we can explicitly write down the solution in these generalizations of the original model. However, as one makes fewer assumptions, the problem becomes more general and complex, and one should not expect to have a tractable form of solution. Instead of wondering what the solution is or looks like, one should focus on the more fundamental question how the solution responds to perturbations of inputs, and considers practical algorithms to compute numerical solutions given input data. This subsection will address the theoretical question, which helps laying a framework for computations. Two abstract mathematical properties, namely continuity and compactness, play a key role throughout this endeavor.
+
+Unlike the previous section where limit sell orders are allowed, we require that the investor can only submit market buy orders. Specifically, assume that:
+\begin{itemize}
+\item $A$ is a cadlag (nonnegative) $\mathcal{H}^1$ martingale;
+\item $X$ is non-decreasing, cadlag, and predictable, with $X_{0^-}=0$ and $X_T = \bar{X}$;
+\item $h$ is nonnegative, $h(\cdot, 0)\equiv 0$ and $\{h(t,\cdot)\}_{t\in[0,T]}$ is locally Lipschitz uniformly in time $t$, i.e. $\forall K > 0, \exists C>0, \forall x,y \in [0,K], t\in[0,T], \abs{h(t,x)-h(t,y)} \le C\abs{x-y}$.
+\end{itemize}
+
+The volume effect process $E$ follows the dynamics defined in the original model: $E_t = X_t - \int_0^t h(s,E_s) ds$, which is well-posed (with respect to the uniform topology $L^\infty$ on $\mathbb{D}([0,T])$, the space of all cadlag functions over $[0,T]$) under the assumption of local Lipschitzness uniformly in time. This exact same technical condition also asserts $L^\infty$-continuity of the operator $X\mapsto E$. Recall that $C(X) = \Phi(E_T) + \int_0^T \psi(E_t) h(t,E_t) dt$ where $\psi$ is increasing and left-continuous and hence lower semicontinuous (lsc), thus we can conclude that $E\mapsto C(X)$ is $L^\infty$-lsc. Therefore, the functional $X\mapsto C(X)$ is $L^\infty$-lsc, meaning that if $X^n \xrightarrow{L^\infty} X$, then $\liminf_{n\to\infty} C(X^n) \ge C(X)$. Lower semicontinuity coupled with compactness of the search space will guarantee the existence of a minimizer.
+
+However, there are two issues of the uniform topology here in this problem, one more technical and the other more realistic. First, the functional $X\mapsto C(X)$ is not $L^\infty$-coercive, i.e. the search space $\{X:C(X) \le K\}$ is not $L^\infty$-compact for some large enough $K<\infty$, because $X$ could jump and we have no further restrictions of the jump times. Without compactness, it is hard to prove existence of minimizers. Second, within the space $(\mathbb{D}([0,T]), L^\infty)$, we can never approximate a strategy $X$ with discrete orders (jumps) using continuous strategies. Or if we don't know the exact jump times of a strategy $X$, we still cannot approximate it using strategies with the same number of jumps. Inflexibility in approximating jumps is an inherent caveat of the uniformly topology that we would like to get around for our purpose, because apriori we have few clues of the jump times of a cost-minimizing strategy.
+
+Luckily, Skorokhod\cite{skorokhod1956limit} had proposed a family of topologies on $\mathbb{D}$ named after him to accommodate different jump approximations, and they are called J1, J2, M1, and M2 respectively. In the following, we briefly discuss the choice of our topology without overwhelming technicalities, and refer interested readers to \citeauthor{skorokhod1956limit} \citeyear{skorokhod1956limit} paper for comprehensive studies of these topologies. All four topologies coincide with $L^\infty$ on the space of continuous functions, and it is exactly the ways they distinguish jump approximations that make them different. Since we are dealing with monotone functions, M2 and M1 topologies are the same while J2 and J1 topologies are the same as well. But continuous functions are closed in J1 topology, which implies that one cannot use continuous functions to approximate jumps in J1, and thus we shall consider M1 topology only. It turns out that M1 topology fits into our problem perfectly, and the idea has a great financial interpretation as well. Intuitively, one views a trading strategy as a continuous parametric curve (or a graph) in the product space of time and quantities purchased, and two strategies are considered closed in M1 if their corresponding curves in the product space could be made closed to each other. This perspective effectively introduces a strategy-dependent trading time different than the physical time, and turns a jump in the strategy under the physical time continuous under the trading time. Coupled with extra assumptions, we are able to prove existence of a minimizer, continuity of the cost functional, and robustness of the problem.
+
+Let's begin with some basics of Skorokhod M1 topology. Consider the product space $[0,T]\times \mathbb{R}$ equipped with $L^1$-norm (the Manhattan distance). Let $X:[0,T]\to \mathbb{R}$ be a cadlag function, define its graph to be $\Gamma_X := \cup_{t\in[0,T]}\left(\{t\} \times [X(t^-), X(t)]\right) = \left\{ \left(t,aX(t^-)+(1-a)X(t)\right) : t\in[0,T], a\in[0,1] \right\}$ (one may feel free to fix $X(0^-):=0$ for our purpose). A parametrization of $X$ is a continuous curve $(t,x):[0,1]\to [0,T]\times\mathbb{R}$ such that $t$ is increasing and $(t,x)([0,1])=\Gamma_X$. In other words, $\Gamma_X$ is the usual plot of a cadlag function by joining the gaps of jumps with straight lines together, and a parametrization of the function is a usual parametrization of the joined curve. 
+
+\begin{defn}[Skorokhod M1 distance and topology]
+Define Skorokhod M1 distance on $\mathbb{D}([0,T])$ by
+$$d_{M1}(X,Y) := \inf\left\{ \norm{(t,x)-(s,y)}_{L^\infty([0,1])} : (t,x) \textrm{ and } (s,y) \textrm{ parametrize } X \textrm{ and } Y, \textrm{ respectively} \right\}, \forall X,Y \in \mathbb{D}([0,T]).$$
+Skorokhod M1 distance $d_{M1}$ is a well-defined metric on $\mathbb{D}([0,T])$, and Skorokhod M1 topology is the topology induced by this metric. In particular, $X^{n} \xrightarrow{d_{M1}} X$ iff $(t^n,x^n) \xrightarrow{L^\infty} (t,x)$ for some parametrizations $(t^n,x^n)$ of $X^n$ and $(t,x)$ of $X$.
+\end{defn}
+
+\begin{rem}
+While $\mathbb{D}([0,T])$ is a vector space equipped with the M1 topology, $(\mathbb{D}([0,T]), M1)$ is not a topological vector space, because addition is not continuous with respect to M1. In other words, the metric $d_{M1}$ is not translation-invariant and it is not enough to study the M1-neighborhood of the zero function.
+\end{rem}
+
+The definition of M1 topology involves parametrizations of cadlag functions, which will vary as the functions and hence inconvenient in applications. A common parametrization in computation is the arc-length parametrization (if the cadlag function is of finite variation), whose speed is constant and equal to the length of the curve. A way to get around the issue of parametrizations in M1-topology is the following necessary and sufficient condition of M1-convergence given in \citet{skorokhod1956limit}.
+\begin{thm}[M1-convergence in terms of M1 modulus of continuity]
+A necessary and sufficient condition for $X^n \xrightarrow{M1} X$ is that both of the followings hold:
+\begin{enumerate}[(a)]
+\item $X^n(t) \to X(t), \forall t\in S$ for some set $S$ dense in $[0,T]$ and $S\supset\{0,T\}$;
+\item $\lim_{c\to 0} \limsup_{n\to\infty} \Delta_{M1}(c;X^n) =0$, where $\Delta_{M1}(c;Y) := \sup\left\{{\rm dist}(Y(t_2), [Y(t_1),Y(t_3)]) : t_2-c < t_1 < t_2 < t_3 < t_2+c \right\}$ is the M1 modulus of continuity of the cadlag function $Y$.
+\end{enumerate}
+\end{thm}
+
+After knowing the definition and characterization of M1 topology, we need a condition for a set to be M1-compact, which is needed in proving the existence of a minimizer. Very similar to Arzela-Ascoli, such a condition is also given in \citet{skorokhod1956limit}.
+\begin{thm}[Arzela-Ascoli for M1-compactness]
+A set $K\subseteq \mathbb{D}([0,T])$ is precompact in M1 topology if and only if $\sup_{X\in K} \norm{X}_{L^\infty([0,T])} < \infty$ and $\lim_{c\to 0} \sup_{X\in K} \Delta_{M1}(c;X) = 0$.
+\end{thm}
+
+Now consider the set of all admissible purchasing strategies $\mathcal{A}:=\left\{X\in \mathbb{D}([0,T]) : X_{0^-}=0, X_T = \bar{X}, X \textrm{ is non-decreasing} \right\}$. It is easy to see either from the arc-length parametrization (fixed length $T+\bar{X}$) or from the M1-compactness criterion that $\mathcal{A}$ is compact in M1. If we can show that the functional $X\mapsto C(X)$ is M1-lsc, then it follows that a minimizer exists. Since M1-topology involves the continuity of the time variable $t$, we assume the additional assumption that $h$ is further equi-continuous in time $t$, i.e. $\forall \epsilon>0, \exists \delta>0, \forall x\in\mathbb{R}_+, s,t\in[0,T], \abs{s-t}<\delta \Rightarrow \abs{h(s,x)-h(t,x)}<\epsilon$. Then we claim that both $X\mapsto E$ and $E\mapsto C(X)$ are M1-continuous.
+
+\begin{lem}[M1-continuity of limit order book dynamic and cost functional]
+Assume that $h$ is locally Lipschitz in space $x$ uniformly in time $t$ and equi-continuous in time $t$ uniformly in space $x$. Then with respect to M1 topology, the function
+$$\mathcal{A} \ni X \mapsto \left\{ E_t = X_t - \int_0^t h(s,E_s) ds \right\}_{t\in[0,T]} \in \mathbb{D}([0,T])$$
+is continuous, and the function
+$$\mathbb{D}([0,T]) \ni E \mapsto \Phi(E_T) + \int_0^T \psi(E_t) h(t,E_t) dt \in \mathbb{R}$$
+is lower-semicontinuous. If further $\psi$ is continuous, then the latter function is also continuous. 
+\end{lem}
+\begin{proof}
+Fix a cadlag functions $X\in \mathcal{A}$. Consider its arc-length parametrization $(t,x)$ of $X$, so the function $(t,x):[0,1] \to [0,T]\times \mathbb{R}_+$ is Lipschitz and $t'+x' \equiv T+\bar{X}$ with $t',x'\ge 0$. Rewrite the differential equation defining the volume effect process $E$ as follows by setting $e(\tau) := E_{t(\tau)}$ whenever $x(\tau)=X_{t(\tau)}$:
+\begin{align*}
+E_t &= X_t - \int_0^t h(s,E_s) ds \\
+E_{t(\tau)} &= X_{t(\tau)} - \int_0^{\tau} h(t(\sigma),E_{t(\sigma)}) d t(\sigma) \\
+e(\tau) &= x(\tau) - \int_0^{\tau} h(t(\sigma),e(\sigma)) t'(\sigma) d\sigma
+\end{align*}
+Extend this equation to all $\tau\in[0,1]$, then $(t,e)$ is a parametrization of $E$. In particular, when $X$ has a jump, i.e. $t'(\tau)=0$ over $\tau\in[a,b]$, we have $e'(\tau)=x'(\tau)=T+\bar{X}$, which says that $E$ changes at the same pace as $X$.
+
+Take another $\tilde{X}\in \mathcal{A}$ with arc-length parametrization $(\tilde{t},\tilde{x})$. Denote its corresponding volume effect process by $\tilde{E}$ with parametrization $(\tilde{t},\tilde{e})$ obtained as above. Compute the difference between parametrizations of $\tilde{E}$ and $E$: $\forall \tau\in[0,1]$,
+\begin{align*}
+\tilde{e}(\tau) - e(\tau) &= \tilde{x}(\tau) - x(\tau) - \int_0^\tau \left[h(\tilde{t}(\sigma),\tilde{e}(\sigma)) \tilde{t}'(\sigma) - h(t(\sigma),e(\sigma)) t'(\sigma) \right] d\sigma \\
+&= \tilde{x}(\tau) - x(\tau) - \int_0^\tau \left\{ [h(\tilde{t}(\sigma),\tilde{e}(\sigma)) - h(t(\sigma),\tilde{e}(\sigma))] + [h(t(\sigma),\tilde{e}(\sigma)) - h(t(\sigma),e(\sigma))] \right\} \tilde{t}'(\sigma) d\sigma \\
+&\qquad - \int_0^\tau h(t(\sigma),e(\sigma)) [\tilde{t}'(\sigma) - t'(\sigma)] d\sigma
+\end{align*}
+Suppose that $\tilde{X} \xrightarrow{M1} X$, then $(\tilde{t},\tilde{x}) \xrightarrow{L^\infty} (t,x)$, and hence $\tilde{t}' \xrightharpoonup{\ast} t'$ from integration by parts. So take $\tilde{X}$ close enough to $X$ in M1, we have $\forall \tau\in[0,1]$
+\begin{align*}
+\abs{\tilde{e}(\tau) - e(\tau)} &\le \abs{\tilde{x}(\tau) - x(\tau)} + \int_0^\tau \left\{ \left|h(\tilde{t}(\sigma),\tilde{e}(\sigma)) - h(t(\sigma),\tilde{e}(\sigma))\right| + \left|h(t(\sigma),\tilde{e}(\sigma)) - h(t(\sigma),e(\sigma))\right| \right\} \tilde{t}'(\sigma) d\sigma \\
+&\qquad + \left| \int_0^\tau h(t(\sigma),e(\sigma)) [\tilde{t}'(\sigma) - t'(\sigma)] d\sigma \right| \\
+&\le \epsilon + \int_0^\tau \left\{\epsilon+C\abs{\tilde{e}(\sigma) - e(\sigma)} \right\} \tilde{t}'(\sigma) d\sigma
+\le \epsilon(1+T) + C(T+\bar{X}) \int_0^\tau \abs{\tilde{e}(\sigma)-e(\sigma)} d\sigma \\
+\abs{\tilde{e}(\tau) - e(\tau)} &\le \epsilon(1+T) \exp\left(C(T+\bar{X})\tau\right) \textrm{ from above and Gronwall's inequality}
+\end{align*}
+Therefore, if $\tilde{X} \xrightarrow{M1} X$, then $\epsilon \to 0$ and $\tilde{e} \xrightarrow{L^\infty} e$, that is $\tilde{E} \xrightarrow{M1} E$ as claimed.
+
+Now fix a cadlag function $E\in \mathbb{D}([0,T])$ and let $\tilde{E} \xrightarrow{M1} E$, i.e. there are parametrizations $(\tilde{t},\tilde{e}) \xrightarrow{L^\infty} (t,e)$. Rewrite the cost functional $E \mapsto \Phi(E_T) + \int_0^T \psi(E_t) h(t,E_t) dt$ in terms of parametrization:
+$$(t,e) \mapsto \Phi(e(1)) + \int_0^1 \psi(e(\sigma)) h(t(\sigma),e(\sigma)) t'(\sigma) d\sigma$$
+Since $\Phi$ is convex and hence continuous, we have $\Phi(\tilde{e}(1)) \to \Phi(e(1))$. Similarly to above, we have $\tilde{t}' \xrightharpoonup{\ast} t'$ and $h(\tilde{t},\tilde{e}) \xrightarrow{L^\infty} h(t,\sigma)$, and thus $\int_0^1 \psi(e(\sigma)) h(\tilde{t}(\sigma),\tilde{e}(\sigma)) \tilde{t}'(\sigma) d\sigma \to \int_0^1 \psi(e(\sigma)) h(t(\sigma),e(\sigma)) t'(\sigma) d\sigma$. On the other hand, $\psi$ is increasing and left-continuous, so it is lsc. As $h$ and $t'$ are both non-negative, we have by lsc of $\psi$,
+\begin{align*}
+& \liminf_{(\tilde{t},\tilde{e}) \xrightarrow{L^\infty} (t,e)} \int_0^1 \psi(\tilde{e}(\sigma)) h(\tilde{t}(\sigma),\tilde{e}(\sigma)) \tilde{t}'(\sigma) d\sigma \\
+= & \liminf_{(\tilde{t},\tilde{e}) \xrightarrow{L^\infty} (t,e)} \int_0^1 \left[\psi(\tilde{e}(\sigma))-\psi(e(\sigma)) \right] h(\tilde{t}(\sigma),\tilde{e}(\sigma)) \tilde{t}'(\sigma) d\sigma + \lim_{(\tilde{t},\tilde{e}) \xrightarrow{L^\infty} (t,e)} \int_0^1 \psi(e(\sigma)) h(\tilde{t}(\sigma),\tilde{e}(\sigma)) \tilde{t}'(\sigma) d\sigma \\
+\ge & \int_0^1 \psi(e(\sigma)) h(t(\sigma),e(\sigma)) t'(\sigma) d\sigma
+\end{align*}
+It is then immediate that the functional $E \mapsto \Phi(E_T) + \int_0^T \psi(E_t) h(t,E_t) dt$ is M1-lsc in general. If $\psi$ is continuous, then the same argument above give us M1-continuity of the functional.
+\end{proof}
+
+\begin{rem}[Alternative proof]
+The lemma above shows that the functional $\mathcal{A} \ni X \mapsto C(X) \in \mathbb{R}$ is M1-continuous by composition. There is another way to do so directly. First, one shows that $X \mapsto E$ is M1-continuous as above. Second, write $C(X) = \Phi(E_T) + \int_0^T \psi(E_t) h(t,E_t) dt = \Phi(e(1)) + \int_0^1 \psi(e(\sigma)) h(t(\sigma),e(\sigma)) t'(\sigma) d\sigma = \int_0^1 \psi(e(\sigma)) e'(\sigma) d\sigma + \int_0^1 \psi(e(\sigma)) h(t(\sigma),e(\sigma)) t'(\sigma) d\sigma = \int_0^1 \psi(e(\sigma)) x'(\sigma) d\sigma$. The conclusion follows from lower-semicontinuity of $\psi$ and weak-star convergence of $x'$.
+\end{rem}
+
+Assembling continuity and compactness, we have the following existence theorem.
+\begin{thm}[Existence of minimizer]
+If the resiliency $h$ is locally Lipschitz in space $x$ uniformly in time $t$ and equi-continuous in time $t$ uniformly in space $x$, then there exists a strategy $X$ that minimizes the trading cost $C(X)$ over all admissible trading strategies.
+\end{thm}
+
+
 
 
 \section{Introducing noises to order flows and/or resiliency}
+
+
 
 % references
 \bibliographystyle{plainnat}
