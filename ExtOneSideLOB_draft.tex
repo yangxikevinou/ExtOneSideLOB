@@ -145,6 +145,7 @@ The following are possible directions of generalizations or complements.
 \item Stochastic shape of the limit order book
 \item Efficient numerical methods to compute (almost) minimizers, echoing abstract properties of the problem
 \item Incorporate limit buy orders, and model market sell order flows
+\item Multi-investor game of purchase
 \end{itemize}
 
 
@@ -521,6 +522,15 @@ In summary, this subsection studies the cost-minimizing problem with time-depend
 
 
 \section{Introducing noises to order flows and/or resiliency}
+The original model and generalizations above are deterministic in nature, due to the deterministic response of the limit order book and a separation of the random price process using integration by parts. It is very interesting to add a truly stochastic component to the model and compare it to the deterministic counterpart. In such cases, we do expect the optimum to be a stochastic predictable trading strategy varying according to scenarios. For simplicity, let's first revert the assumptions back to the ones in the original paper, in which the resiliency $h:\mathbb{R}_+ \to \mathbb{R}_+$ is time-homogeneous, strictly increasing, locally Lipschitz, and vanishing at the origin.
+
+\subsection{Noisy resiliency}
+
+In the original model, the volume 
+
+{\color{red}
+\subsection{Noise purchasers}
+}
 
 
 
