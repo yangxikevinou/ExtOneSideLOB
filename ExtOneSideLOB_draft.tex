@@ -481,11 +481,43 @@ The lemma above shows that the functional $\mathcal{A} \ni X \mapsto C(X) \in \m
 \end{rem}
 
 Assembling continuity and compactness, we have the following existence theorem.
-\begin{thm}[Existence of minimizer]
+\begin{thm}[Existence of a minimizer]
 If the resiliency $h$ is locally Lipschitz in space $x$ uniformly in time $t$ and equi-continuous in time $t$ uniformly in space $x$, then there exists a strategy $X$ that minimizes the trading cost $C(X)$ over all admissible trading strategies.
 \end{thm}
 
+We see from the proof that it is not necessary $C(\tilde{X}) \to C(X)$ as $\tilde{X} \xrightarrow{M1} X$ due to lower-semicontinuity. However, since $\psi$ is left-continuous, if $\tilde{X} \xrightarrow{M1} X$ is such that $\tilde{E} \uparrow E$, then we have $C(\tilde{X}) \to C(X)$. This suggests one to approximate the volume effect process from below in order to approximate the minimal trading cost.
 
+After showing continuity and existence, we would like to see the response of trading cost to perturbations of inputs, in particular the resiliency function $h$ and the shape of the limit order book $\Phi$ (or equivalently $\psi = \partial \Phi$). This will address the robustness of the model.
+
+Fix the time span $T$ and the purchasing target $\bar{X}$. Consider a family of resiliency functions $\left\{h^{(\lambda)}\right\}_{\lambda\ge 0}$ and (marginal) price impact functions $\left\{\psi^{(\lambda)}\right\}_{\lambda\ge 0}$ satisfying the assumptions for existence of minimizers above and such that $h^{(\lambda)} \xrightarrow{L^\infty} h^{(0)}$ and $\psi^{(\lambda)} \xrightarrow{L^\infty} \psi^{(0)}$. Each pair $\left(h^{(\lambda)}, \psi^{(\lambda)}\right)$ then gives us a functional $X\mapsto E^{(\lambda)} \mapsto C^{(\lambda)}(X)$, and minimizing $C^{(\lambda)}$ is itself a problem that produces an optimal trading strategy $X^{(\lambda)}$. The following theorem asserts a form of (semi-)continuity of the function $\lambda \mapsto C^{(\lambda)}$. Leveraging on the theory of $\Gamma$-convergence \cite{GammaConv}, we may conclude that ``minimizers $X^{(\lambda)}$ `converge' to minimizer $X^{(0)}$''. However, we shall not elaborate on $\Gamma$-convergence here.
+
+\begin{thm}[Uniformly lower-semicontinuity of cost functional]
+Let $\left\{h^{(\lambda)}\right\}_{\lambda\ge 0}$ be a family of resiliency functions each locally Lipschitz in space $x$ uniformly in time $t$ and equi-continuous in time $t$ uniformly in space $x$, and $\left\{\psi^{(\lambda)}\right\}_{\lambda\ge 0}$ be a family of margin price impact functions of the limit order book each increasing, left-continuous, and vanishing at zero. Denote the corresponding total trading cost functional in terms of strategy as $\left\{C^{(\lambda)}\right\}_{\lambda\ge 0}$. If $h^{(\lambda)} \xrightarrow{L^\infty} h^{(0)}$ and $\psi^{(\lambda)} \xrightarrow{L^\infty} \psi^{(0)}$, then the following families of functions converge uniformly as $\lambda \to 0$:
+\begin{align*}
+\mathcal{A} \ni X \mapsto \left\{ E^{(\lambda)}_t = X_t - \int_0^t h^{(\lambda)}\left(s,E^{(\lambda)}_s\right) ds \right\}_{t\in[0,T]} \in \mathbb{D}([0,T]) \\
+\mathbb{D}([0,T]) \ni E \mapsto \Phi^{(\lambda)}(E_T) + \int_0^T \psi^{(\lambda)}(E_t) h^{(\lambda)}(t,E_t) dt \in \mathbb{R}
+\end{align*}
+Consequently, the cost functionals satisfy $C^{(0)} \le \liminf_{\lambda\to 0} C^{(\lambda)}$ uniformly in $X$, i.e. $\forall \epsilon>0, \exists \lambda(\epsilon)>0, \forall X\in\mathcal{A}, 0<\lambda<\lambda(\epsilon), C^{(0)}(X) \le C^{(\lambda)}(X)+\epsilon$. Furthermore, $C^{(\lambda)} \xrightarrow{L^\infty} C^{(0)}$ if $\psi^{(0)}$ is continuous.
+\end{thm}
+\begin{proof}
+Take any trading strategy $X\in \mathcal{A}$. For each $\lambda\ge 0$, let $E^{(\lambda)}$ satisfy the differential equation
+$$E^{(\lambda)}_t = X_t - \int_0^t h^{(\lambda)}\left(s,E^{(\lambda)}_s\right) ds$$
+Subtract $E^{(0)}$ from above, we have
+\begin{align*}
+\left| E^{(\lambda)}_t - E^{(0)}_t \right| &= \left| -\int_0^t \left[h^{(\lambda)}\left(s,E^{(\lambda)}_s\right) - h^{(0)}\left(s,E^{(0)}_s\right) \right] ds \right| \\
+&\le \int_0^t \left|  h^{(\lambda)}\left(s,E^{(\lambda)}_s\right) - h^{(0)}\left(s,E^{(\lambda)}_s\right)\right| + \left| h^{(0)}\left(s,E^{(\lambda)}_s\right) - h^{(0)}\left(s,E^{(0)}_s\right)\right| ds \\
+&\le T \norm{h^{(\lambda)}-h^{(0)}}_{L^\infty} + C \int_0^t \abs{E^{(\lambda)}_s-E^{(0)}_s} ds
+\end{align*}
+Then by Gronwalls' inequality, it follows that $E^{(\lambda)} \xrightarrow{L^\infty} E^{(0)}$ since $h^{(\lambda)} \xrightarrow{L^\infty} h^{(0)}$, and the convergence is independent of $X$. Because on $\mathbb{D}([0,T])$ uniform topology is stronger than M1 topology, we have that $E^{(\lambda)} \xrightarrow{M1} E^{(0)}$ as well. Thus, the functions ($X\mapsto E^{(\lambda)}$) converge uniformly as $\lambda \to 0$.
+
+The uniform convergence of the costs in terms of volume effect process $E\mapsto C(X)$ is immediately inherited from those of $\left\{\psi^{(\lambda)}\right\}_{\lambda\ge 0}$, $\left\{h^{(\lambda)}\right\}_{\lambda\ge 0}$ and integration.
+
+Finally, the uniform (semi-)continuity of $\lambda \mapsto C^{(\lambda)}$ is a well-known result of functional composition.
+\end{proof}
+
+This theorem essentially allows one to approximate the actual resiliency function $h$ and the actual margin price impact $\psi$ with some simplified or numerical friendly versions in computations while keeping the solutions ``close to'' the exact optimum. We already know that resiliency function of time-homogeneous elasticity has solutions of the form of Type B strategies. It would be a good starting point to approximate the actual resiliency function with continuous piecewise time-homogeneous elastic resiliency in numerical computations. 
+
+In summary, this subsection studies the cost-minimizing problem with time-dependent resiliency from abstract properties, and establishes general existence and continuity under some extra assumptions. The key mathematical tools are Skorokhod M1 topology and theory of differential equations.
 
 
 \section{Introducing noises to order flows and/or resiliency}
