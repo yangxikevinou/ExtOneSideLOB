@@ -266,7 +266,7 @@ v(t^-, E_{t^-}, \bar{X}-X_{t^-}) + \Phi(E_{t^-}) &= \inf_{\Delta X_t \ge 0} \lef
 that is $v(t^-,e,x) + \Phi(e) = \inf_{a\ge 0} \left\{v(t,e+a,x-a) + \Phi(e+a) \right\}$. At the instance before terminal time $T$, one must have $v(T^-,e,x)=\Phi(e+x)-\Phi(e)$ if $x>0$ and zero otherwise, as the only way to achieve the purchasing target (avoiding infinite cost) is to buy $a=x>0$ shares immediately. In differential form (ignoring possible jumps), using the equation $X_t = E_t + \int_0^t h_s(E_s) ds$, one has
 \begin{align*}
 0 &= \partial_t v + g_t(h_t(e)) + \inf_{a\ge 0} \left\{ (\partial \Phi(e) + \partial_e v) (a-h_t(e)) - a \partial_x v \right\} \\
-&= \partial_t v + g_t(h_t(e)) + \inf_{a\ge 0} \left\{ (\partial \Phi(e) + \partial_e v - \partial_x v) a - h_t(e) (\partial \Phi(e) + \partial_e v) \right\} = \partial_t v - h_t(e) \partial_e v + g_t(h_t(e)) - h_t(e) \partial \Phi(e),
+&= \partial_t v + g_t(h_t(e)) + \inf_{a\ge 0} \left\{ (\partial \Phi(e) + \partial_e v - \partial_x v) a - h_t(e) (\partial \Phi(e) + \partial_e v) \right\} = \partial_t v - h_t(e) \partial_e v,
 \end{align*}
 since either $a=0$ or $\partial \Phi(e) + \partial_e v - \partial_x v = 0$. To have the infimum well-posed, one must impose that $\partial \Phi(e) + \partial_e v - \partial_x v \ge 0$. If $\partial \Phi(e) + \partial_e v - \partial_x v > 0$, then it is clear that $a=0$, i.e. the rate of purchase is zero at those particular moments. However, if $\partial \Phi(e) + \partial_e v - \partial_x v = 0$, then the HJB equation \emph{alone} does not give us any information about the optimal trading strategy, and we have to infer this piece of information from something else. In general HJB equation is difficult to solve explicitly, but if one has a solution with sufficient regularity in some special case, then a standard verification argument will give us the minimal cost of the problem. Moreover, if one can infer the optimal trading strategy from HJB, then the strategy is usually given in the so-called feedback form, i.e. a function in terms of the state variables. On the contrary, one does not obtain a feedback form strategy from the Euler-Lagrange equation.
 
@@ -524,11 +524,117 @@ In summary, this subsection studies the cost-minimizing problem with time-depend
 \section{Introducing noises to order flows and/or resiliency}
 The original model and generalizations above are deterministic in nature, due to the deterministic response of the limit order book and a separation of the random price process using integration by parts. It is very interesting to add a truly stochastic component to the model and compare it to the deterministic counterpart. In such cases, we do expect the optimum to be a stochastic predictable trading strategy varying according to scenarios. For simplicity, let's first revert the assumptions back to the ones in the original paper, in which the resiliency $h:\mathbb{R}_+ \to \mathbb{R}_+$ is time-homogeneous, strictly increasing, locally Lipschitz, and vanishing at the origin.
 
+{\color{red}
 \subsection{Noisy resiliency}
 
-In the original model, the volume 
+In the original model, the volume effect process is given by the ordinary differential/integral equation
+$$E_t = X_t - \int_0^t h(E_s) ds.$$
+Here we add a noise term to the volume effect, and the new dynamics becomes
+$$E_t = X_t - \int_0^t h(E_s) ds - \int_0^t \sigma(E_s) dB_s,$$
+where $B$ is a standard Brownian motion and $\sigma:\mathbb{R}_+ \to \mathbb{R}$ is Lipschitz and vanishes at zero, so that the process $E$ is well-defined and non-negative provided that $X$ is non-decreasing. The cost functional in terms of $X$ stays the same as before:
+$$C(X) := \E\left[\int_0^T \psi(E_t) d X^c_t + \sum_{0\le t\le T} \Phi(E_t) - \Phi(E_{t^-})\right].$$
+The investor would like to minimize $C(X)$ among all predictable cadlag incresasing functions $X$ with $X_{0^-}=0, X_{T}=\bar{X} > 0$. Recall that $\Phi$ is increasing and convex with $\Phi(0)=0$ while $\psi = D^-\Phi = \min\partial\Phi$ with $\psi(0)=0$, which is increasing and left-continuous (and hence lsc).
 
-{\color{red}
+\subsubsection{Dynamic programming and HJB equation}
+Dynamic programming or HJB is the most natural method to try first in stochastic control. We will derive the HJB for this case of time-homogeneous coefficients, assuming necessary regularities of functions whenever required.
+
+Since coefficients are time homogeneous, we let $t$ be the time remaining till the end of the period, $e$ be the starting position in the equilibrium limit order book (relative to the hypothetical best ask $A$ which is WLOG assumed zero), and $x$ be the remaining quantities of stocks to be purchased. Let $v:\mathbb{R}_+ \times \mathbb{R}_+ \times \mathbb{R}_+ \to [0,\infty]$ be the value function of the minimization problem:
+$$v(t,e,x) := \inf\left\{\E\left[\int_0^t \psi(E_s) d X^c_s + \sum_{0\le s\le t} \Phi(E_s) - \Phi(E_{s^-})\right] : E_{0^-}=e, X_{0^-}=0, X_t=x, X \textrm{ predictable cadlag increasing} \right\}.$$
+It is clear that $v(0,e,x)=0$ iff $x=0$ and $v(0,e,x)=+\infty$ iff $x>0$ as the boundary condition.
+
+By dynamic programming principle, the process $\left\{v(T-t,E_t,\bar{X}-X_t) + \int_0^t \psi(E_s) d X^c_s + \sum_{0\le s\le t} \Phi(E_s) - \Phi(E_{s^-})\right\}_{t\in[0,T]}$ is supposed to be a submartingale for any admissible strategy $X$ and a UI martingale for an optimal strategy $X^\ast$. By considering the jump part of a strategy, we have
+\begin{align*}
+& v(T-t,E_t,\bar{X}-X_t)+\Phi(E_t)-\Phi(E_{t^-}) \ge v((T-t)^+,E_{t^-},\bar{X}-X_{t^-}), \\
+& \textrm{(recall jumps are predictable and equality could be attained)} \\
+\Rightarrow & \inf_{a\ge 0}\{v(t,e+a,x-a)+\Phi(e+a)-\Phi(e)\} = v(t^+,e,x).
+\end{align*}
+By considering absolute continuous part of a strategy, we have
+\begin{align*}
+0 \le & -\partial_t v(T-t,E_t,\bar{X}-X_t) dt +\partial_e v(T-t,E_t,\bar{X}-X_t)(dX^c_t-h(E_t)dt) +\frac{1}{2}\partial^2_e v(T-t,E_t,\bar{X}-X_t) \sigma^2(E_t)dt \\
+& -\partial_x v(T-t,E_t,\bar{X}-X_t) dX^c_t + \psi(E_t) dX^c_t, \\
+& \textrm{(let } dX^c_t=a_t dt \textrm{ and recall equality could be attained)} \\
+0 = & -\partial_t v - h(e) \partial_e v + \frac{1}{2}\sigma^2(e) \partial^2_e v + \inf_{a\ge 0}\{a(\psi(e) +\partial_e v -\partial_x v)\} = -\partial_t v - h(e) \partial_e v + \frac{1}{2}\sigma^2(e) \partial^2_e v
+\end{align*}
+If we further assume that the function $a\mapsto v(t,e+a,x-a)+\Phi(e+a)$ is strictly convex with a unique critical point, then we have the following (classical) partial differential/difference equation
+$$\begin{cases}
+v(t^+,e,x)+\Phi(e) = \inf_{a\ge 0}\{v(t,e+a,x-a)+\Phi(e+a)\}, & \textrm{ if } \psi(e) +\partial_e v -\partial_x v <0 \textrm{ (jump region)}, \\
+\partial_t v + h(e)\partial_e v - \frac{1}{2}\sigma^2(e) \partial^2_e v = 0, & \textrm{ if } \psi(e) +\partial_e v -\partial_x v \ge 0 \textrm{ (continuation region)}, \\
+v(0,e,x)=\begin{cases} 0, & \textrm{ if } x=0 \\ +\infty, & \textrm{ if } x>0 \end{cases}, & \textrm{boundary condition}.
+\end{cases}$$
+Unlike other HJB equations however, we still do not have a feedback form control directly even if we have a solution, since the minimization in the differential equation from the absolute continuous control is linear and if $\psi(e)+\partial_e v-\partial_x v=0$, then any $a\ge 0$ is a possible continuous trading rate (or even singularly continuous) that achieves the minimum zero. We also remark that the equation shares some similarities with Black-Scholes equations for American securities, in that both PDEs are linear parabolic (with homogeneous forcing) in the continuation region with a so-called free-boundary to be solved simultaneously. Their only difference lies in the free-boundary condition. For this reason, we don't expect to solve the equation above analytically even in the simplest form (though it is said that the value function of a finite-maturity American put option can be analytically expressed an infinite series using Homotopy Analysis Method). We are more interested in the abstract properties of PDEs from a modern perspective. In particular, we would like to establish a notion of solution useful for the so-called verification lemma and permitting well-posedness (possibly without continuity with respect to data) under some mild conditions. It would be better if there is some robustness condition and a numerical scheme could be developed. (Note that a naive viscosity solution does not work as it is automatically continuous whereas the equation above has jumps.)
+
+We make two observations before considering a concrete example in which we could compute the value function using the result in the original paper. First, at $t=0$, there must be a jump when $x>0$ due to the discrete minimization in the difference equation. It is obvious that the optimal jump size is $a^\ast=x>0$ and $v(0^+,e,x)=\Phi(e+x)-\Phi(e)$. We could consider it as the effective boundary condition. Note that $\psi(e)+\partial_e v(0^+,e,x)-\partial_x v(0^+,e,x)=0, \forall e,x\in \mathbb{R}_+$. Second, if $\sigma\equiv 0$, then the model reduces to the original one, of which we know the solution even for irregular coefficients, at least for $v(t,0,x)$. This could be used as a sanity check. The only undesired point of this special case is that a first-order transport equation does not possess smoothing effect or maximum principle as its second-order counterpart Fokker-Planck equation does.
+
+In the following, we consider the deterministic model mentioned above for sanity check. For simplicity, we consider a linear impact (the limit order book is linear so marginal price is linear and hence average price) linear resiliency model and solve for $v(t,e,x)$:
+$$\sigma\equiv 0, h(x)=\frac{1}{2}x, \Phi(x)=\frac{1}{2}x^2 \Leftrightarrow \psi(x)=x.$$
+By the original paper, the cost functional in terms of state, the volume effect process $E$, is
+\begin{align*}
+C(X) &= \Phi(E_t)-\Phi(E_{0^-})+\int_0^t \psi(E_s) h(E_s) ds = \frac{1}{2}E^2_t - \frac{1}{2}e^2 + \int_0^t \frac{1}{2} E^2_s ds \\
+&\ge \frac{1}{2}E^2_t - \frac{1}{2}e^2 + \frac{t}{2}\left(\frac{2}{t}\int_0^t \frac{1}{2}E_s ds\right)^2 = \frac{1}{2}E^2_t - \frac{1}{2}e^2 + \frac{2}{t}(x+e-E_t)^2, \\
+\textrm{(Recall } & E_t=e+X_t-\int_0^t h(E_s)ds = e+x-\int_0^t \frac{1}{2}E_s ds \textrm{)}
+\end{align*}
+where equality is attained iff $e\le E_{0^+}=E_s=\frac{2}{t}(x+e-E_t)=E_{t^-}\le E_t,\forall s\in(0,t)$, implemented by a Type A strategy as termed in the original paper. Solving for the constraint, we obtain
+$$\frac{2x+2e}{2+t} \le E_t \le \frac{2x+2e-te}{2}, x\ge \frac{t}{2}e.$$
+If $x< \frac{t}{2}e = t h(e)$, then trading against the resiliency will acquire more stocks than needed, and in such case, the equality can never be obtained. In this case, the investor will have to wait a while for the book to refill itself then trade against only incoming liquidity till the end, with a possible jump at terminal time. We study this case later since the volume effect process decay exponentially if there is no incoming market buys and one is forced to solve a transcendental equation.
+
+If $x\ge \frac{t}{2}e$, we look for the minimum of $E_t \mapsto \frac{1}{2}E^2_t - \frac{1}{2}e^2 + \frac{2}{t}(x+e-E_t)^2$ for $E_t \in \left[\frac{2x+2e}{2+t}, \frac{2x+2e-te}{2}\right]$. The function is a convex quadratic and hence admits a unique minimum. The critical point is given by the equation $E_t - \frac{4}{t}(x+e-E_t)=0 \Rightarrow E_t=\frac{4(x+e)}{4+t}$, which falls in the admissible interval if $x\ge \frac{2+t}{2}e$. In such case, the optimal $E_0=\frac{2(e+x)}{4+t}$ and $v(t,e,x)=\frac{2}{4+t}(e+x)^2 - \frac{1}{2}e^2$. If $\frac{t}{2}e \le x < \frac{2+t}{2}e$, then the critical point is to the right of the admissible interval and hence the minimum is attained at the right end point. The optimal $E_0=e=E_{0^-}$ and $E_t=x+e-\frac{t}{2}e$ with the corresponding cost $v(t,e,x)=\frac{1}{2}\left(x^2+(2-t)xe+\frac{t^2}{4}e^2\right)$. (However, I don't think this is right for this case and it indeed violates the HJB, but I can't immediate see why.) We briefly summarize the above result for the case $t>0$ and $x\ge \frac{t}{2}e$:
+$$v(t,e,x)=
+\begin{cases}
+\frac{2}{4+t}(e+x)^2 - \frac{1}{2}e^2, & x\ge\frac{2+t}{2}e \\
+\frac{1}{2}\left(x^2+(2-t)xe+\frac{t^2}{4}e^2\right), & \frac{t}{2}e \le x < \frac{2+t}{2}e
+\end{cases}$$
+
+Even though the case $x\ge \frac{t}{2}e$ is not a complete solution to the value function, there is enough interesting information to check its compatibility with the HJB equation. It is clear that $v(0^+,e,x)=\Phi(e+x)-\Phi(e)$, which agrees with the effective boundary condition. Compute the partial derivatives:
+\begin{align*}
+\partial_t v(t,e,x) &=
+\begin{cases}
+-\frac{2}{(4+t)^2}(e+x)^2, & x>\frac{2+t}{2}e \\
+\frac{t}{4}e^2-\frac{1}{2}xe, & \frac{t}{2}e < x < \frac{2+t}{2}e
+\end{cases}, \quad
+& \partial_t v \left(t,e,\frac{2+t}{2}e^+\right) = -\frac{1}{2}e^2 = \partial_t v \left(t,e,\frac{2+t}{2}e^-\right); \\
+\partial_e v(t,e,x) &=
+\begin{cases}
+\frac{4}{4+t}(e+x)-e, & x>\frac{2+t}{2}e \\
+\frac{2-t}{2}x+\frac{t^2}{4}e, & \frac{t}{2}e < x < \frac{2+t}{2}e
+\end{cases}, \quad
+& \partial_e v \left(t,e,\frac{2+t}{2}e^+\right) = e = \partial_e v \left(t,e,\frac{2+t}{2}e^-\right); \\
+\partial_x v(t,e,x) &=
+\begin{cases}
+\frac{4}{4+t}(e+x), & x>\frac{2+t}{2}e \\
+x+\frac{2-t}{2}e, & \frac{t}{2}e < x < \frac{2+t}{2}e
+\end{cases}, \quad
+& \partial_x v \left(t,e,\frac{2+t}{2}e^+\right) = 2e = \partial_x v \left(t,e,\frac{2+t}{2}e^-\right).
+\end{align*}
+So $v\in C^1$ in this range. We then compute the following two expressions:
+\begin{align*}
+\psi(e) +\partial_e v(e,t,x) -\partial_t v(e,t,x) &=
+\begin{cases}
+0, & x>\frac{2+t}{2}e \\
+\frac{t}{2}\left(\frac{2+t}{2}e-x\right)>0, & \frac{t}{2}e < x < \frac{2+t}{2}e
+\end{cases}; \\
+\partial_t v(t,e,x) + h(e)\partial_e v(t,e,x) &=
+\begin{cases}
+\frac{2}{(4+t)^2}((3+t)e^2+(2+t)ex-x^2)-\frac{1}{2}e^2 <0, & x>\frac{2+t}{2}e \\
+\frac{t}{4}e\left(\frac{2+t}{2}e-x\right) >0, & \frac{t}{2}e < x < \frac{2+t}{2}e
+\end{cases}.
+\end{align*}
+These inequalities show that whenever $x\ge \frac{2+t}{2}e$, one can place a discrete order as he wishes without changing the future costs as long as it stays within this range. In particular, one can submit a market buy order so that $x=\frac{2+t}{2}e$. Along this critical curve, $\partial_t v + h(e)\partial_e v =0$ and $\psi(e)+\partial_e v -\partial_x v=0$. Also, when $x>\frac{2+t}{2}e$ it is suboptimal not to trade at all since $-\partial_t v -h(e)\partial_e v >0$. Note that staying along the critical curve $x=\frac{2+t}{2}e$ is consistent with the optimal strategy used in the original model (and hence the derivation above). In contrast, when $\frac{t}{2}e<x<\frac{2+t}{2}e$, one should not trade at all and it is better off waiting for $e$ and $t$ to drop until $x=\frac{2+t}{2}e$. This is however in contradiction to the ``claimed optimality'' of the Type A strategy above.
+
+Back to the value function (independent of HJB) above, we conjecture that whenever $x<\frac{2+t}{2}e$, i.e. there are fewer stocks to be purchased that make the unique critical point of the quadratic fall in the admissible interval, the optimal strategy is of the form not trading for a while until time $s\in[0,t]$, and then following a Type A strategy without the initial jump but with a possible terminal jump. So we have the following equations setup for such a strategy:
+\begin{align*}
+E_s = e\exp\left(-\frac{1}{2}s\right), \frac{1}{2}E_s(t-s) + \Delta E_t = x.
+\end{align*}
+The cost of this strategy is then
+\begin{align*}
+C(X) = \Phi\left(E_s+x-\frac{1}{2}E_s(t-s)\right) - \Phi(E_s) + (t-s)\frac{1}{2}E^2_s = \frac{1}{2}\left(x-\frac{1}{2}E_s(t-s-2)\right)^2 + (t-s-1)\frac{1}{2}E^2_s.
+\end{align*}
+Minimizing $C(X)$ with respect to $s$ requires solving a transcendental equation. We write down the derivative and claim that it is consistent with our claim of optimality.
+\begin{align*}
+\frac{dC}{ds} = \left(x-\frac{1}{2}E_s(t-s-2)\right)\frac{1}{4}E_s(t-s) - \frac{1}{2}E^2_s(t-s) = \frac{1}{4}E_s (t-s) \left(x-\frac{t-s+2}{2}E_s\right).
+\end{align*}
+It is easy to check that $\frac{dC}{ds}\big|_{s=0} < 0$ if $x<\frac{2+t}{2}e$, which says that following a Type A strategy from the very beginning is suboptimal. However, we are unable to solve the value function explicitly in this case.
+
+
 \subsection{Noise purchasers}
 }
 
